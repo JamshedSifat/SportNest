@@ -1,0 +1,30 @@
+{% extends 'admin_panel/admin_base.html' %}
+{% block title %}Sales Analytics{% endblock %}
+{% block page_title %}Sales Analytics{% endblock %}
+{% block page_subtitle %}Revenue and sales insights (connect your order app for live data).{% endblock %}
+
+{% block content %}
+<div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6">
+  <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+    <p class="text-sm text-gray-500">Today Revenue</p>
+    <h3 class="text-2xl font-black mt-1">৳0</h3>
+  </div>
+  <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+    <p class="text-sm text-gray-500">This Month</p>
+    <h3 class="text-2xl font-black mt-1">৳0</h3>
+  </div>
+  <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+    <p class="text-sm text-gray-500">Total Orders</p>
+    <h3 class="text-2xl font-black mt-1">0</h3>
+  </div>
+  <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+    <p class="text-sm text-gray-500">Avg Order Value</p>
+    <h3 class="text-2xl font-black mt-1">৳0</h3>
+  </div>
+</div>
+
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+  <h3 class="text-lg font-bold mb-2">Sales Report</h3>
+  <p class="text-sm text-gray-500">Connect your Order model to show real charts and reports here.</p>
+</div>
+{% endblock %}

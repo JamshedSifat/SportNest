@@ -1,0 +1,272 @@
+
+<header class="sticky top-0 z-50">
+    <!-- Top Announcement -->
+    <div class="hidden sm:block text-white text-xs sm:text-sm py-2 bg-gradient-to-r from-green-500 to-green-700">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <p class="font-medium">🚚 Free shipping on orders above ৳3,000!</p>
+                <p class="hidden md:block">🔥 Summer Sale - Up to 50% OFF</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <div class="backdrop-blur-md bg-white/90 shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between gap-4 lg:gap-8 py-3 lg:py-4">
+
+                <!-- Logo -->
+                <a href="/" class="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-gradient-to-br from-green-500 to-green-700">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg sm:text-xl lg:text-2xl font-black tracking-tight leading-none">
+                            <span class="text-green-500">Sport</span><span class="text-gray-900">Nest</span>
+                        </h1>
+                        <p class="text-[8px] sm:text-[10px] lg:text-xs font-medium text-gray-500 tracking-wider hidden xs:block">
+                            YOUR GAME, OUR PASSION
+                        </p>
+                    </div>
+                </a>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden lg:flex items-center gap-1">
+                    <a href="/" class="px-4 py-2 rounded-lg text-sm font-semibold bg-green-100 text-green-600">Home</a>
+                    <a href="{% url 'shop:all_products' %}" class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-green-100 hover:text-green-600 transition">Shop</a>
+                    <a href="{% url 'shop:shop_home' %}" class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-green-100 hover:text-green-600 transition">Categories</a>
+                    <a href="#" class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-green-100 hover:text-green-600 transition relative">
+                        Offers
+                        <span class="absolute -top-1 -right-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white bg-red-500 animate-pulse">HOT</span>
+                    </a>
+                </nav>
+
+                <!-- Right Actions -->
+                <div class="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-1 max-w-2xl justify-end">
+
+                    <!-- Search (Desktop) -->
+                    <div class="hidden sm:flex flex-1 relative group max-w-xs lg:max-w-md">
+                        <div class="absolute inset-y-0 left-0 pl-3 lg:pl-4 flex items-center pointer-events-none">
+                            <svg class="w-4 h-4 lg:w-5 lg:h-5 text-gray-400 group-focus-within:text-green-500 transition-colors"
+                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <input type="text" placeholder="Search sports gear..."
+                               class="w-full pl-9 lg:pl-12 pr-3 lg:pr-4 py-2 lg:py-2.5 rounded-lg lg:rounded-xl text-xs lg:text-sm border-2 border-gray-200 bg-gray-50 focus:border-green-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-100 transition-all">
+                    </div>
+
+                    <!-- Cart Icon -->
+                    <a href="{% url 'cart:cart_detail' %}"
+                       class="relative p-2 rounded-lg lg:rounded-xl text-gray-800 hover:bg-green-100 hover:text-green-600 transition-all duration-300"
+                       aria-label="Cart">
+                        <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        {% if cart_count > 0 %}
+                        <span class="absolute -top-1.5 -right-1.5 text-[10px] font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center text-white bg-red-500 px-1.5 animate-pulse">
+                            {{ cart_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+
+                    <!-- User Dropdown (Desktop) -->
+                    {% if user.is_authenticated %}
+                    <div class="relative group hidden sm:block">
+                        <button class="flex items-center gap-2 p-2 rounded-lg lg:rounded-xl text-gray-800 hover:bg-green-100 transition-all">
+                            {% if user.avatar %}
+                                <img src="{{ user.avatar.url }}" alt="{{ user.get_full_name }}" class="w-8 h-8 lg:w-9 lg:h-9 rounded-full object-cover border-2 border-white shadow">
+                            {% else %}
+                                <div class="w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white font-bold text-xs lg:text-sm shadow">
+                                    {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                                </div>
+                            {% endif %}
+                            <div class="hidden lg:block text-left">
+                                <p class="text-sm font-semibold leading-tight">{{ user.first_name|default:"User" }}</p>
+                                <p class="text-xs text-gray-500 leading-tight">My Account</p>
+                            </div>
+                        </button>
+
+                        <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                            <a href="{% url 'cart:cart_detail' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 transition">
+                                My Cart
+                                {% if cart_count > 0 %}
+                                <span class="ml-auto bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ cart_count }}</span>
+                                {% endif %}
+                            </a>
+                            <a href="{% url 'accounts:profile' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 transition">My Profile</a>
+                            {% if user.is_staff %}
+                            <a href="{% url 'admin_panel:dashboard' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 transition">Admin Panel</a>
+                            {% endif %}
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <a href="{% url 'accounts:logout' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition">Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'accounts:login' %}" class="hidden sm:flex items-center gap-2 px-4 lg:px-5 py-2 lg:py-2.5 rounded-lg lg:rounded-xl text-white font-semibold text-xs lg:text-sm bg-gradient-to-br from-green-500 to-green-700 hover:shadow-lg transition-all duration-300">
+                        Sign In
+                    </a>
+                    {% endif %}
+
+                    <!-- ============ HAMBURGER MENU BUTTON ============ -->
+                    <button id="menuToggle" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition z-50 relative">
+                        <svg id="menuIcon" class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ MOBILE MENU OVERLAY ============ -->
+    <div id="mobileMenu" class="fixed inset-0 z-40 hidden lg:hidden">
+        <!-- Backdrop -->
+        <div id="menuBackdrop" class="absolute inset-0 bg-black/50 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
+        
+        <!-- Slide Panel -->
+        <div id="menuPanel" class="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+            
+            <!-- Menu Header -->
+            <div class="flex items-center justify-between p-5 border-b border-gray-100">
+                <span class="font-black text-lg">Menu</span>
+                <button id="menuClose" class="w-10 h-10 rounded-xl hover:bg-gray-100 flex items-center justify-center transition">
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Menu Links -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-1">
+                
+                <!-- Search (Mobile) -->
+                <div class="mb-4">
+                    <div class="relative">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <input type="text" placeholder="Search sports gear..." 
+                               class="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-gray-200 text-sm focus:border-green-500 focus:outline-none">
+                    </div>
+                </div>
+                
+                <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold bg-green-100 text-green-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/>
+                    </svg>
+                    Home
+                </a>
+                
+                <a href="{% url 'shop:all_products' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                    </svg>
+                    Shop
+                </a>
+                
+                <a href="{% url 'shop:shop_home' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                    </svg>
+                    Categories
+                </a>
+                
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 transition">
+                    Offers
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full text-white bg-red-500 animate-pulse">HOT</span>
+                </a>
+                
+                <div class="border-t border-gray-100 my-3"></div>
+                
+                {% if user.is_authenticated %}
+                <div class="px-4 py-2">
+                    <div class="flex items-center gap-3 mb-3">
+                        {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" class="w-10 h-10 rounded-full object-cover">
+                        {% else %}
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white font-bold">
+                                {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                            </div>
+                        {% endif %}
+                        <div>
+                            <p class="font-bold text-sm">{{ user.get_full_name }}</p>
+                            <p class="text-xs text-gray-400">{{ user.email }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="{% url 'accounts:profile' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 transition">
+                    👤 My Profile
+                </a>
+                <a href="{% url 'cart:cart_detail' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 transition">
+                    🛒 My Cart
+                </a>
+                {% if user.is_staff %}
+                <a href="{% url 'admin_panel:dashboard' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 transition">
+                    ⚙️ Admin Panel
+                </a>
+                {% endif %}
+                <a href="{% url 'accounts:logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 font-semibold hover:bg-red-50 transition">
+                    🚪 Logout
+                </a>
+                {% else %}
+                <a href="{% url 'accounts:login' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white font-semibold bg-gradient-to-r from-green-500 to-green-700 justify-center">
+                    Sign In
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuClose = document.getElementById('menuClose');
+    const menuBackdrop = document.getElementById('menuBackdrop');
+    const menuPanel = document.getElementById('menuPanel');
+    const menuIcon = document.getElementById('menuIcon');
+    
+    function openMenu() {
+        mobileMenu.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        
+        // Animate
+        setTimeout(() => {
+            menuBackdrop.style.opacity = '1';
+            menuPanel.classList.remove('translate-x-full');
+        }, 10);
+    }
+    
+    function closeMenu() {
+        menuBackdrop.style.opacity = '0';
+        menuPanel.classList.add('translate-x-full');
+        document.body.style.overflow = '';
+        
+        setTimeout(() => {
+            mobileMenu.classList.add('hidden');
+        }, 300);
+    }
+    
+    if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', openMenu);
+        menuClose.addEventListener('click', closeMenu);
+        menuBackdrop.addEventListener('click', closeMenu);
+        
+        // Close on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+                closeMenu();
+            }
+        });
+    }
+});
+</script>

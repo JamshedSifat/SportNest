@@ -1,0 +1,43 @@
+{% extends 'admin_panel/admin_base.html' %}
+{% block title %}Inventory{% endblock %}
+{% block page_title %}Inventory{% endblock %}
+{% block page_subtitle %}Monitor stock levels and identify low-stock products.{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-gray-500 border-b">
+          <th class="py-3">Product</th>
+          <th class="py-3">Category</th>
+          <th class="py-3">Brand</th>
+          <th class="py-3">Stock</th>
+          <th class="py-3">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        <tr class="border-b last:border-0 hover:bg-gray-50">
+          <td class="py-3 font-semibold">{{ p.name }}</td>
+          <td class="py-3">{{ p.subcategory.main_category.name|default:"-" }} / {{ p.subcategory.name|default:"-" }}</td>
+          <td class="py-3">{{ p.brand.name|default:"-" }}</td>
+          <td class="py-3">{{ p.stock }}</td>
+          <td class="py-3">
+            {% if p.stock == 0 %}
+              <span class="px-2 py-1 rounded-full text-xs bg-red-50 text-red-700">Out of Stock</span>
+            {% elif p.stock < 5 %}
+              <span class="px-2 py-1 rounded-full text-xs bg-yellow-50 text-yellow-700">Low Stock</span>
+            {% else %}
+              <span class="px-2 py-1 rounded-full text-xs bg-green-50 text-green-700">In Stock</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="py-10 text-center text-gray-400">No products found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'admin_panel/admin_base.html' %}
+{% block title %}Customers{% endblock %}
+{% block page_title %}Customers{% endblock %}
+{% block page_subtitle %}All registered customers in your store.{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-gray-500 border-b">
+          <th class="py-3">Customer</th>
+          <th class="py-3">Email</th>
+          <th class="py-3">Phone</th>
+          <th class="py-3">Joined</th>
+          <th class="py-3">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for customer in customers %}
+        <tr class="border-b last:border-0 hover:bg-gray-50">
+          <td class="py-3 font-semibold">{{ customer.get_full_name|default:"N/A" }}</td>
+          <td class="py-3">{{ customer.email }}</td>
+          <td class="py-3">{{ customer.phone|default:"-" }}</td>
+          <td class="py-3">{{ customer.date_joined|date:"M d, Y" }}</td>
+          <td class="py-3">
+            {% if customer.is_active %}
+              <span class="px-2 py-1 rounded-full text-xs bg-green-50 text-green-700">Active</span>
+            {% else %}
+              <span class="px-2 py-1 rounded-full text-xs bg-red-50 text-red-700">Inactive</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="py-10 text-center text-gray-400">No customers found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

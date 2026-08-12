@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.order_number }} | SportNest{% endblock %}
+
+{% block content %}
+<section class="py-8 sm:py-12 min-h-screen bg-gray-50">
+    <div class="container mx-auto px-4 max-w-2xl">
+        <a href="{% url 'orders:my_orders' %}" class="text-sm text-gray-400 hover:text-green-500 mb-4 inline-block">← Back to Orders</a>
+        
+        <div class="bg-white rounded-2xl p-6 shadow-sm border">
+            <h1 class="text-2xl font-black mb-6">Order #{{ order.order_number }}</h1>
+            
+            <div class="space-y-3 text-sm mb-6">
+                <div class="flex justify-between"><span class="text-gray-500">Status</span><span class="font-bold">{{ order.get_status_display }}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Date</span><span>{{ order.created_at|date:"M d, Y H:i" }}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Payment</span><span>{{ order.get_payment_method_display }}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Total</span><span class="font-black text-lg text-green-600">৳{{ order.total }}</span></div>
+            </div>
+            
+            <h3 class="font-bold mb-3">Items</h3>
+            <div class="space-y-2">
+                {% for item in order.items.all %}
+                <div class="flex justify-between text-sm py-2 border-b">
+                    <span>{{ item.product_name }} x{{ item.quantity }}</span>
+                    <span class="font-bold">৳{{ item.subtotal }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

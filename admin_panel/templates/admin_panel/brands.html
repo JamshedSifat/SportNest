@@ -1,0 +1,32 @@
+{% extends 'admin_panel/admin_base.html' %}
+{% block title %}Brands{% endblock %}
+{% block page_title %}Brands{% endblock %}
+{% block page_actions %}
+<a href="{% url 'admin_panel:brand_create' %}" class="px-5 py-3 rounded-xl bg-green-500 text-white font-semibold">+ Add Brand</a>
+{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+  <div class="space-y-3">
+    {% for b in brands %}
+    <div class="p-4 border rounded-xl flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        {% if b.logo %}
+        <img src="{{ b.logo.url }}" class="w-10 h-10 rounded-lg object-cover">
+        {% endif %}
+        <div>
+          <p class="font-semibold">{{ b.name }}</p>
+          <p class="text-xs text-gray-500">Featured: {{ b.is_featured }}</p>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <a href="{% url 'admin_panel:brand_edit' b.id %}" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600">Edit</a>
+        <a href="{% url 'admin_panel:brand_delete' b.id %}" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-600">Delete</a>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-gray-400">No brands found.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

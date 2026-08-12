@@ -1,0 +1,21 @@
+{% extends 'admin_panel/admin_base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+  <form method="post" enctype="multipart/form-data" class="space-y-4">
+    {% csrf_token %}
+    {% for field in form %}
+    <div>
+      <label class="block text-sm font-semibold mb-2">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}<p class="text-red-600 text-sm mt-1">{{ field.errors.0 }}</p>{% endif %}
+    </div>
+    {% endfor %}
+    <div class="flex gap-3 pt-2">
+      <button class="px-6 py-3 rounded-xl bg-green-500 text-white font-semibold">Save</button>
+      <a href="{% url 'admin_panel:categories' %}" class="px-6 py-3 rounded-xl border border-gray-300 font-semibold">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

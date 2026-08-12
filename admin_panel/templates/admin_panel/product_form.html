@@ -1,0 +1,46 @@
+{% extends 'admin_panel/admin_base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block page_subtitle %}Fill product information and save.{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+  <form method="post" enctype="multipart/form-data" class="space-y-5">
+    {% csrf_token %}
+
+    <div class="grid md:grid-cols-2 gap-4">
+      {% for field in form %}
+      <div class="{% if field.name == 'description' or field.name == 'specifications' %}md:col-span-2{% endif %}">
+        <label class="block text-sm font-semibold mb-2">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<p class="text-red-600 text-sm mt-1">{{ field.errors.0 }}</p>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold mb-2">Extra Images</label>
+      <input type="file" name="extra_images" multiple class="block w-full border rounded-xl px-4 py-2">
+    </div>
+
+    {% if extra_images %}
+    <div>
+      <h3 class="font-semibold mb-3">Current Extra Images</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {% for img in extra_images %}
+        <div class="border rounded-xl p-2">
+          <img src="{{ img.image.url }}" class="w-full h-24 object-cover rounded-lg mb-2">
+          <a href="{% url 'admin_panel:product_image_delete' img.id %}" class="text-xs text-red-600 font-semibold">Remove</a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="flex gap-3 pt-2">
+      <button type="submit" class="px-6 py-3 rounded-xl bg-green-500 text-white font-semibold hover:bg-green-600 transition">Save Product</button>
+      <a href="{% url 'admin_panel:products' %}" class="px-6 py-3 rounded-xl border border-gray-300 font-semibold">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

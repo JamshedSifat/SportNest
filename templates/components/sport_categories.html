@@ -1,0 +1,275 @@
+{% load static %}
+
+<section class="py-12 sm:py-16 bg-white">
+    <div class="container mx-auto px-4 sm:px-6">
+        
+        <!-- Small Title -->
+        <div class="mb-6 sm:mb-8">
+            <span class="text-xs font-bold tracking-widest uppercase" style="color: #22C55E;">Categories</span>
+            <h2 class="text-2xl sm:text-3xl font-bold mt-1" style="color: #111827;">Shop by Sport</h2>
+        </div>
+        
+        {% if main_categories %}
+        <!-- Main Categories -->
+        <div class="flex flex-wrap gap-2 sm:gap-3 mb-8">
+            {% for category in main_categories %}
+            <button onclick="showSubcategories('{{ category.slug }}')" 
+                    class="category-btn magnetic-btn px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 border relative overflow-hidden"
+                    data-category="{{ category.slug }}"
+                    data-count="{{ category.subcategory_count }}"
+                    style="border-color: #E5E7EB; color: #6B7280; background: white;">
+                <span class="relative z-10">{{ category.name }}</span>
+                <span class="live-count ml-1.5 text-[10px] font-bold relative z-10"
+                      style="color: #22C55E;">{{ category.subcategory_count }}</span>
+            </button>
+            {% endfor %}
+        </div>
+        
+        <!-- Subcategories Container -->
+        {% for category in main_categories %}
+        <div id="sub-{{ category.slug }}" class="subcategory-group hidden mb-6">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="w-1 h-5 rounded-full" style="background: #22C55E;"></span>
+                <h3 class="text-lg font-bold" style="color: #111827;">{{ category.name }}</h3>
+                <span class="live-product-count text-xs font-bold px-2 py-0.5 rounded-full" 
+                      style="background: #DCFCE7; color: #22C55E;">
+                    {{ category.product_count }}+ products
+                </span>
+            </div>
+            
+            <div class="subcategory-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+                {% for sub in category.subcategories.all %}
+                <a href="{% url 'shop:subcategory_detail' sub.slug %}" 
+                   class="magnetic-sub sub-item opacity-0 translate-y-4 px-4 py-3 rounded-lg border transition-all duration-500 text-sm font-medium relative"
+                   style="border-color: #E5E7EB; color: #6B7280; background: white;"
+                   data-delay="{{ forloop.counter0 }}">
+                    <span class="sub-name">{{ sub.name }}</span>
+                    <span class="sub-count text-[10px] font-bold ml-1"
+                          style="color: #22C55E;">{{ sub.product_count }}</span>
+                </a>
+                {% empty %}
+                <p class="text-sm text-gray-400 col-span-full py-4">No subcategories yet</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        {% else %}
+        <p class="text-gray-400 text-sm">No categories available.</p>
+        {% endif %}
+        
+    </div>
+</section>
+
+<style>
+    /* ============ BASE STYLES ============ */
+    .magnetic-btn, .magnetic-sub {
+        transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1), 
+                    border-color 0.3s, color 0.3s, background-color 0.3s, box-shadow 0.3s;
+    }
+    
+    /* ============ DESKTOP - HOVER SHOW COUNT ============ */
+    @media (min-width: 769px) {
+        .category-btn .live-count {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .category-btn:hover .live-count,
+        .category-btn.active .live-count {
+            opacity: 1 !important;
+        }
+        
+        .magnetic-sub .sub-count {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .magnetic-sub:hover .sub-count {
+            opacity: 1 !important;
+        }
+    }
+    
+    /* ============ MOBILE - COUNT ALWAYS VISIBLE AS BADGE ============ */
+    @media (max-width: 768px) {
+        /* Category tab count - top-right badge */
+        .category-btn .live-count {
+            opacity: 1 !important;
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #22C55E !important;
+            color: white !important;
+            font-size: 9px;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            font-weight: 700;
+            line-height: 1;
+            box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+        }
+        
+        /* Subcategory count - inline visible */
+        .magnetic-sub .sub-count {
+            opacity: 1 !important;
+            font-size: 9px;
+            color: #22C55E !important;
+            font-weight: 600;
+        }
+        
+        /* Smaller padding for mobile */
+        .category-btn {
+            padding: 8px 14px !important;
+            font-size: 13px !important;
+        }
+        
+        .magnetic-sub {
+            padding: 10px 12px !important;
+            font-size: 13px !important;
+        }
+    }
+    
+    /* ============ ACTIVE TAB ============ */
+    .category-btn.active .live-count {
+        opacity: 1 !important;
+    }
+    
+    /* ============ HOVER EFFECTS ============ */
+    .magnetic-sub:hover {
+        border-color: #22C55E !important;
+        color: #22C55E !important;
+        background-color: #F0FDF4 !important;
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.1);
+    }
+    
+    .category-btn:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    
+    /* ============ STAGGERED FADE-IN ============ */
+    .sub-item {
+        opacity: 0;
+        transform: translateY(16px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    
+    .sub-item.show {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+    }
+    
+    /* ============ LIVE COUNT PULSE ============ */
+    @keyframes countPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.08); }
+    }
+    
+    .live-product-count {
+        animation: countPulse 3s infinite;
+    }
+</style>
+
+<script>
+    // ============ MAGNETIC HOVER EFFECT ============
+    document.querySelectorAll('.magnetic-btn, .magnetic-sub').forEach(el => {
+        el.addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            const moveX = x * 0.1;
+            const moveY = y * 0.1;
+            
+            this.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+        
+        el.addEventListener('mouseleave', function() {
+            this.style.transform = 'translate(0px, 0px)';
+        });
+    });
+    
+    
+    // ============ STAGGERED FADE-IN + TAB SWITCHING ============
+    function showSubcategories(slug) {
+        // Hide all groups
+        document.querySelectorAll('.subcategory-group').forEach(el => {
+            el.classList.add('hidden');
+        });
+        
+        // Reset all items
+        document.querySelectorAll('.sub-item').forEach(el => {
+            el.classList.remove('show');
+        });
+        
+        // Show selected group
+        const target = document.getElementById('sub-' + slug);
+        if (target) {
+            target.classList.remove('hidden');
+            
+            // Staggered animation
+            const items = target.querySelectorAll('.sub-item');
+            items.forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.add('show');
+                }, index * 60);
+            });
+        }
+        
+        // Update button styles
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.style.borderColor = '#E5E7EB';
+            btn.style.color = '#6B7280';
+            btn.style.background = 'white';
+            btn.classList.remove('active');
+        });
+        
+        const activeBtn = document.querySelector(`[data-category="${slug}"]`);
+        if (activeBtn) {
+            activeBtn.style.borderColor = '#22C55E';
+            activeBtn.style.color = '#22C55E';
+            activeBtn.style.background = '#F0FDF4';
+            activeBtn.classList.add('active');
+        }
+    }
+    
+    
+    // ============ LIVE COUNTER ANIMATION ============
+    function animateCount(element, target) {
+        let current = 0;
+        const increment = target / 30;
+        const duration = 600;
+        const stepTime = duration / 30;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                element.textContent = target;
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.floor(current);
+            }
+        }, stepTime);
+    }
+    
+    
+    // ============ INITIALIZE ============
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstBtn = document.querySelector('.category-btn');
+        if (firstBtn) {
+            showSubcategories(firstBtn.dataset.category);
+        }
+        
+        // Animate live counts
+        document.querySelectorAll('.live-product-count').forEach(el => {
+            const text = el.textContent.replace(/[^0-9]/g, '');
+            const target = parseInt(text);
+            if (target && target > 0) {
+                animateCount(el, target);
+            }
+        });
+    });
+</script>

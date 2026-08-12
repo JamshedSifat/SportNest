@@ -1,0 +1,117 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Order #{{ order.order_number }} | Admin{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    
+    <!-- Back -->
+    <a href="{% url 'admin_panel:orders' %}" class="text-gray-400 hover:text-green-500 text-sm mb-4 inline-block">
+        ← Back to Orders
+    </a>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left - Order Details -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Order Header -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h1 class="text-2xl font-black">Order #{{ order.order_number }}</h1>
+                    <p class="text-gray-400 text-sm">{{ order.created_at|date:"F j, Y - g:i A" }}</p>
+                </div>
+                <span class="px-4 py-2 rounded-full text-sm font-bold
+                    {% if order.status == 'PENDING' %}bg-yellow-100 text-yellow-700
+                    {% elif order.status == 'CONFIRMED' %}bg-blue-100 text-blue-700
+                    {% elif order.status == 'PROCESSING' %}bg-indigo-100 text-indigo-700
+                    {% elif order.status == 'SHIPPED' %}bg-purple-100 text-purple-700
+                    {% elif order.status == 'DELIVERED' %}bg-green-100 text-green-700
+                    {% elif order.status == 'CANCELLED' %}bg-red-100 text-red-700{% endif %}">
+                    {{ order.get_status_display }}
+                </span>
+            </div>
+            
+            <!-- Items Table -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h3 class="font-bold text-lg mb-4">📦 Order Items</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="text-left text-xs text-gray-400 uppercase border-b">
+                            <tr>
+                                <th class="pb-3">Product</th>
+                                <th class="pb-3">Price</th>
+                                <th class="pb-3">Qty</th>
+                                <th class="pb-3 text-right">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                            <tr class="border-b">
+                                <td class="py-3 font-bold text-sm">{{ item.product_name }}</td>
+                                <td class="py-3 text-sm">৳{{ item.price }}</td>
+                                <td class="py-3 text-sm">{{ item.quantity }}</td>
+                                <td class="py-3 text-right font-bold text-sm">৳{{ item.subtotal }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr><td colspan="3" class="pt-4 text-right font-bold">Subtotal</td><td class="pt-4 text-right">৳{{ order.subtotal }}</td></tr>
+                            {% if order.discount > 0 %}
+                            <tr><td colspan="3" class="text-right text-green-600">Discount</td><td class="text-right text-green-600">-৳{{ order.discount }}</td></tr>
+                            {% endif %}
+                            <tr><td colspan="3" class="text-right font-black text-lg">Total</td><td class="text-right font-black text-lg text-green-600">৳{{ order.total }}</td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- Right - Customer & Actions -->
+        <div class="space-y-6">
+            
+            <!-- Customer Info -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h3 class="font-bold mb-3">👤 Customer</h3>
+                <p class="font-bold">{{ order.full_name }}</p>
+                <p class="text-sm text-gray-500">{{ order.email }}</p>
+                <p class="text-sm text-gray-500">{{ order.phone }}</p>
+            </div>
+            
+            <!-- Shipping -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h3 class="font-bold mb-3">📍 Shipping Address</h3>
+                <p class="text-sm">{{ order.address }}</p>
+                <p class="text-sm text-gray-500">{{ order.city }}{% if order.postal_code %} - {{ order.postal_code }}{% endif %}</p>
+                <p class="text-sm text-gray-500 mt-2">📱 {{ order.phone }}</p>
+            </div>
+            
+            <!-- Payment -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h3 class="font-bold mb-3">💳 Payment</h3>
+                <p class="font-bold">{{ order.get_payment_method_display }}</p>
+                <p class="text-sm text-gray-500 mt-2">Notes: {{ order.notes|default:"None" }}</p>
+            </div>
+            
+            <!-- Status Update -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h3 class="font-bold mb-3">🔄 Update Status</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    <select name="status" class="w-full px-4 py-3 rounded-xl border border-gray-200 mb-3 focus:border-green-500 focus:outline-none">
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="w-full py-3 rounded-xl bg-green-500 text-white font-bold hover:bg-green-600 transition">
+                        Update Status
+                    </button>
+                </form>
+            </div>
+            
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

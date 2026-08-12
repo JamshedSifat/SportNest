@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+{% block title %}Your Cart | SportNest{% endblock %}
+
+{% block content %}
+<section class="relative min-h-screen overflow-hidden bg-gradient-to-b from-slate-50 via-white to-emerald-50/40">
+  
+  <!-- Background Blobs -->
+  <div class="pointer-events-none absolute inset-0">
+    <div class="absolute -top-24 -left-24 h-80 w-80 rounded-full bg-emerald-200/40 blur-3xl"></div>
+    <div class="absolute top-1/3 -right-24 h-72 w-72 rounded-full bg-cyan-200/40 blur-3xl"></div>
+  </div>
+
+  <div class="relative container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl sm:text-4xl font-black text-slate-900">🛒 Your Cart</h1>
+      <p class="mt-2 text-slate-500"><span id="cartItemCount">{{ cart.total_items }}</span> items</p>
+    </div>
+
+    {% if cart_items %}
+    <div class="grid lg:grid-cols-3 gap-8">
+      
+      <!-- Cart Items -->
+      <div class="lg:col-span-2 space-y-4" id="cartItemsContainer">
+        {% for item in cart_items %}
+        <div class="cart-item bg-white rounded-2xl p-4 shadow-sm border flex gap-4" data-item-id="{{ item.id }}">
+          <a href="{% url 'shop:product_detail' item.product.slug %}" class="w-20 h-20 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden">
+            {% if item.product.image %}
+            <img src="{{ item.product.image.url }}" class="w-full h-full object-cover">
+            {% else %}
+            <div class="grid place-items-center text-2xl">📦</div>
+            {% endif %}
+          </a>
+          
+          <div class="flex-1 min-w-0">
+            <h3 class="font-bold text-sm line-clamp-1">{{ item.product.name }}</h3>
+            <p class="text-xs text-gray-400">{{ item.product.brand.name|default:'' }}</p>
+            
+            <!-- Quantity Controls -->
+            <div class="flex items-center gap-2 mt-3">
+              <div class="flex items-center border rounded-lg">
+                <button class="qty-btn w-8 h-8 hover:bg-gray-100" data-action="decrease">−</button>
+                <input type="number" class="qty-input w-12 h-8 text-center font-bold text-sm border-x" 
+                       value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" readonly>
+                <button class="qty-btn w-8 h-8 hover:bg-gray-100" data-action="increase">+</button>
+              </div>
+              <button class="remove-btn text-xs text-red-500 hover:text-red-700 font-semibold ml-2">Remove</button>
+            </div>
+          </div>
+          
+          <div class="text-right flex-shrink-0">
+            <p class="text-xs text-gray-400">Total</p>
+            <p class="item-total font-bold text-lg">৳{{ item.total_price }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      
+      <!-- Summary -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border sticky top-24">
+          <h3 class="text-xl font-black mb-6">Order Summary</h3>
+          
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-500">Subtotal</span>
+              <span class="font-bold" id="summarySubtotal">৳{{ cart.subtotal }}</span>
+            </div>
+            
+            <!-- Coupon Section -->
+            <div id="couponSection" class="border-t pt-3">
+              {% if cart.coupon %}
+              <div class="flex justify-between text-green-600">
+                <span>Coupon ({{ cart.coupon.code }})</span>
+                <span class="font-bold" id="couponDiscount">-৳{{ cart.coupon.discount_amount }}</span>
+              </div>
+              <button id="removeCouponBtn" class="text-xs text-red-500 hover:text-red-700 mt-1">Remove</button>
+              {% else %}
+              <div class="flex gap-2 mt-2">
+                <input type="text" id="couponInput" placeholder="Coupon code" 
+                       class="flex-1 px-3 py-2 text-sm border rounded-lg uppercase">
+                <button id="applyCouponBtn" class="px-4 py-2 bg-emerald-500 text-white text-sm font-bold rounded-lg hover:bg-emerald-600">
+                  Apply
+                </button>
+              </div>
+              <p id="couponMessage" class="text-xs mt-1 hidden"></p>
+              {% endif %}
+            </div>
+            
+            <div class="flex justify-between">
+              <span class="text-gray-500">Shipping</span>
+              <span class="font-bold text-green-600">FREE</span>
+            </div>
+            
+            <div class="border-t pt-3 flex justify-between text-lg">
+              <span class="font-black">Total</span>
+              <span class="font-black text-green-600" id="summaryTotal">৳{{ cart.total }}</span>
+            </div>
+          </div>
+          
+          <a href="{% url 'orders:checkout' %}" class="...">
+    Proceed to Checkout →
+</a>
+          
+          <a href="{% url 'shop:shop_home' %}" class="block text-center mt-4 text-sm text-gray-400 hover:text-green-500">
+            ← Continue Shopping
+          </a>
+        </div>
+      </div>
+      
+    </div>
+    {% else %}
+    <!-- Empty -->
+    <div class="text-center py-20">
+      <div class="text-6xl mb-4">🛒</div>
+      <h3 class="text-2xl font-black text-gray-400">Your cart is empty</h3>
+      <a href="{% url 'shop:shop_home' %}" class="inline-block mt-6 px-8 py-4 rounded-2xl bg-emerald-500 text-white font-bold">
+        Start Shopping →
+      </a>
+    </div>
+    {% endif %}
+    
+  </div>
+</section>
+
+<!-- ============ AJAX SCRIPTS ============ -->
+<script>
+// CSRF Token
+function getCSRF() {
+    return document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+           document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
+}
+
+// Update Summary
+function updateSummary(data) {
+    if (data.subtotal !== undefined) document.getElementById('summarySubtotal').textContent = '৳' + data.subtotal;
+    if (data.cart_total !== undefined) document.getElementById('summaryTotal').textContent = '৳' + data.cart_total;
+    if (data.cart_count !== undefined) document.getElementById('cartItemCount').textContent = data.cart_count;
+}
+
+// Quantity Update (AJAX)
+document.querySelectorAll('.cart-item').forEach(item => {
+    const itemId = item.dataset.itemId;
+    
+    item.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('.qty-input');
+            let qty = parseInt(input.value);
+            
+            if (this.dataset.action === 'increase') qty++;
+            else qty = Math.max(1, qty - 1);
+            
+            fetch(`/cart/update/${itemId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCSRF(),
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: `quantity=${qty}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.removed) {
+                        item.remove();
+                    } else {
+                        input.value = data.quantity;
+                        item.querySelector('.item-total').textContent = '৳' + data.item_total;
+                    }
+                    updateSummary(data);
+                }
+            });
+        });
+    });
+    
+    // Remove Button
+    item.querySelector('.remove-btn').addEventListener('click', function() {
+        fetch(`/cart/remove/${itemId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRF(),
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                item.remove();
+                updateSummary(data);
+            }
+        });
+    });
+});
+
+// Apply Coupon
+document.getElementById('applyCouponBtn')?.addEventListener('click', function() {
+    const code = document.getElementById('couponInput').value.trim();
+    const msg = document.getElementById('couponMessage');
+    
+    fetch('/cart/coupon/apply/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRF(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify({ code: code })
+    })
+    .then(res => res.json())
+    .then(data => {
+        msg.classList.remove('hidden');
+        if (data.success) {
+            msg.className = 'text-xs mt-1 text-green-600';
+            msg.textContent = data.message;
+            updateSummary(data);
+            location.reload();
+        } else {
+            msg.className = 'text-xs mt-1 text-red-500';
+            msg.textContent = data.message;
+        }
+    });
+});
+
+// Remove Coupon
+document.getElementById('removeCouponBtn')?.addEventListener('click', function() {
+    fetch('/cart/coupon/remove/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCSRF(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            updateSummary(data);
+            location.reload();
+        }
+    });
+});
+</script>
+
+{% endblock %}

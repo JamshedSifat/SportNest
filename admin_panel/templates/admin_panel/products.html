@@ -1,0 +1,63 @@
+{% extends 'admin_panel/admin_base.html' %}
+{% block title %}Products{% endblock %}
+{% block page_title %}Products{% endblock %}
+{% block page_subtitle %}Create, edit, and manage all shop products.{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'admin_panel:product_create' %}" class="px-5 py-3 rounded-xl bg-green-500 text-white font-semibold hover:bg-green-600 transition">+ Add Product</a>
+{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+  <form method="get" class="mb-4">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search by product name..."
+           class="w-full sm:w-80 px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-200 focus:border-green-500 outline-none">
+  </form>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-gray-500 border-b">
+          <th class="py-3">Image</th>
+          <th class="py-3">Name</th>
+          <th class="py-3">SKU</th>
+          <th class="py-3">Price</th>
+          <th class="py-3">Stock</th>
+          <th class="py-3">Status</th>
+          <th class="py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        <tr class="border-b last:border-0 hover:bg-gray-50">
+          <td class="py-3">
+            {% if p.image %}
+            <img src="{{ p.image.url }}" class="w-12 h-12 rounded-lg object-cover">
+            {% else %}
+            <div class="w-12 h-12 rounded-lg bg-gray-100"></div>
+            {% endif %}
+          </td>
+          <td class="py-3 font-semibold">{{ p.name }}</td>
+          <td class="py-3">{{ p.sku }}</td>
+          <td class="py-3">৳{{ p.price }}</td>
+          <td class="py-3">{{ p.stock }}</td>
+          <td class="py-3">
+            {% if p.is_active %}
+            <span class="px-2 py-1 rounded-full text-xs bg-green-50 text-green-700">Active</span>
+            {% else %}
+            <span class="px-2 py-1 rounded-full text-xs bg-red-50 text-red-700">Inactive</span>
+            {% endif %}
+          </td>
+          <td class="py-3 text-right space-x-2">
+            <a href="{% url 'admin_panel:product_edit' p.id %}" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 font-medium">Edit</a>
+            <a href="{% url 'admin_panel:product_delete' p.id %}" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 font-medium">Delete</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="py-10 text-center text-gray-400">No products found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

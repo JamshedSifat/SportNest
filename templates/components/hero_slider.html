@@ -1,0 +1,251 @@
+{% load static %}
+
+<section class="relative h-[70vh] sm:h-[80vh] lg:h-[90vh] min-h-[500px] sm:min-h-[600px] lg:min-h-[680px] overflow-hidden bg-black">
+
+  <!-- SLIDE 1 -->
+  <div class="slide absolute inset-0 opacity-100 transition-all duration-700">
+    <img src="{% static 'images/banner1.jpg' %}"
+         class="absolute inset-0 h-full w-full object-cover scale-110 animate-[zoom_8s_linear_infinite_alternate]"
+         alt="Football">
+
+    <!-- Overlay - darker on mobile for readability -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/40 
+                sm:bg-gradient-to-r sm:from-black sm:via-black/70 sm:to-transparent"></div>
+
+    <div class="relative z-10 mx-auto flex h-full max-w-7xl items-end sm:items-center px-4 sm:px-6 lg:px-8 pb-24 sm:pb-0">
+      <div class="max-w-2xl text-white">
+        
+        <p class="mb-2 sm:mb-4 text-xs sm:text-sm font-semibold tracking-[0.2em] sm:tracking-[0.3em] text-lime-300">
+          NEW COLLECTION 2026
+        </p>
+
+        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black leading-[0.9] sm:leading-none">
+          PLAY
+          <br>
+          <span class="text-lime-300">FEARLESS</span>
+        </h1>
+
+        <p class="mt-3 sm:mt-6 text-sm sm:text-base lg:text-lg text-gray-300 leading-relaxed sm:leading-8 max-w-md sm:max-w-xl">
+          Premium football gear engineered for speed, precision and champions.
+        </p>
+
+        <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
+          <a href="#"
+             class="text-center rounded-full bg-white px-5 sm:px-7 py-3 sm:py-4 font-bold text-sm sm:text-base text-black transition hover:scale-105 active:scale-95">
+            Shop Collection
+          </a>
+
+          <a href="#"
+             class="text-center rounded-full border border-white/30 px-5 sm:px-7 py-3 sm:py-4 font-semibold text-sm sm:text-base text-white backdrop-blur hover:bg-white hover:text-black transition active:scale-95">
+            Explore
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 -->
+  <div class="slide absolute inset-0 opacity-0 transition-all duration-700 pointer-events-none">
+    <img src="{% static 'images/banner2.jpg' %}"
+         class="absolute inset-0 h-full w-full object-cover scale-110 animate-[zoom_8s_linear_infinite_alternate]"
+         alt="Cricket">
+
+    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/40 
+                sm:bg-gradient-to-r sm:from-black sm:via-black/70 sm:to-transparent"></div>
+
+    <div class="relative z-10 mx-auto flex h-full max-w-7xl items-end sm:items-center px-4 sm:px-6 lg:px-8 pb-24 sm:pb-0">
+      <div class="max-w-2xl text-white">
+
+        <p class="mb-2 sm:mb-4 text-xs sm:text-sm font-semibold tracking-[0.2em] sm:tracking-[0.3em] text-yellow-300">
+          PREMIUM CRICKET
+        </p>
+
+        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black leading-[0.9] sm:leading-none">
+          OWN
+          <br>
+          <span class="text-yellow-300">THE GAME</span>
+        </h1>
+
+        <p class="mt-3 sm:mt-6 text-sm sm:text-base lg:text-lg text-gray-300 leading-relaxed sm:leading-8 max-w-md sm:max-w-xl">
+          Elite bats, gloves and equipment trusted by professional players.
+        </p>
+
+        <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
+          <a href="#"
+             class="text-center rounded-full bg-white px-5 sm:px-7 py-3 sm:py-4 font-bold text-sm sm:text-base text-black transition hover:scale-105 active:scale-95">
+            Shop Cricket
+          </a>
+
+          <a href="#"
+             class="text-center rounded-full border border-white/30 px-5 sm:px-7 py-3 sm:py-4 font-semibold text-sm sm:text-base text-white backdrop-blur hover:bg-white hover:text-black transition active:scale-95">
+            Explore
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 -->
+  <div class="slide absolute inset-0 opacity-0 transition-all duration-700 pointer-events-none">
+    <img src="{% static 'images/banner3.jpg' %}"
+         class="absolute inset-0 h-full w-full object-cover scale-110 animate-[zoom_8s_linear_infinite_alternate]"
+         alt="Fitness">
+
+    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/40 
+                sm:bg-gradient-to-r sm:from-black sm:via-black/70 sm:to-transparent"></div>
+
+    <div class="relative z-10 mx-auto flex h-full max-w-7xl items-end sm:items-center px-4 sm:px-6 lg:px-8 pb-24 sm:pb-0">
+      <div class="max-w-2xl text-white">
+
+        <p class="mb-2 sm:mb-4 text-xs sm:text-sm font-semibold tracking-[0.2em] sm:tracking-[0.3em] text-cyan-300">
+          PERFORMANCE FITNESS
+        </p>
+
+        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black leading-[0.9] sm:leading-none">
+          TRAIN
+          <br>
+          <span class="text-cyan-300">HARDER</span>
+        </h1>
+
+        <p class="mt-3 sm:mt-6 text-sm sm:text-base lg:text-lg text-gray-300 leading-relaxed sm:leading-8 max-w-md sm:max-w-xl">
+          High-performance apparel and gym essentials for everyday athletes.
+        </p>
+
+        <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
+          <a href="#"
+             class="text-center rounded-full bg-white px-5 sm:px-7 py-3 sm:py-4 font-bold text-sm sm:text-base text-black transition hover:scale-105 active:scale-95">
+            Shop Fitness
+          </a>
+
+          <a href="#"
+             class="text-center rounded-full border border-white/30 px-5 sm:px-7 py-3 sm:py-4 font-semibold text-sm sm:text-base text-white backdrop-blur hover:bg-white hover:text-black transition active:scale-95">
+            Explore
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Controls -->
+  <div class="absolute bottom-4 sm:bottom-8 left-0 right-0 z-20">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+
+      <!-- Slide Counter -->
+      <div class="flex items-center gap-2 sm:gap-3 text-white">
+        <span id="current" class="text-lg sm:text-2xl font-bold">01</span>
+        <div class="h-px w-8 sm:w-12 bg-white/40"></div>
+        <span class="text-sm sm:text-base text-white/50">03</span>
+      </div>
+
+      <!-- Navigation Arrows -->
+      <div class="flex gap-2 sm:gap-3">
+        <button id="prev"
+                class="h-10 w-10 sm:h-12 sm:w-12 rounded-full border border-white/20 bg-white/10 text-white text-sm sm:text-base backdrop-blur hover:bg-white hover:text-black transition active:scale-90 flex items-center justify-center">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+
+        <button id="next"
+                class="h-10 w-10 sm:h-12 sm:w-12 rounded-full border border-white/20 bg-white/10 text-white text-sm sm:text-base backdrop-blur hover:bg-white hover:text-black transition active:scale-90 flex items-center justify-center">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="mx-auto mt-3 sm:mt-5 h-[2px] sm:h-[3px] max-w-7xl bg-white/10 rounded-full overflow-hidden mx-4 sm:mx-6 lg:mx-8">
+      <div id="progress"
+           class="h-full w-1/3 bg-lime-300 transition-all duration-700 rounded-full">
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- Dots for Mobile -->
+<div class="flex sm:hidden justify-center gap-2 mt-3 absolute bottom-0 left-0 right-0 z-30 pb-1">
+  <button class="dot w-2 h-2 rounded-full bg-white transition-all" data-index="0"></button>
+  <button class="dot w-2 h-2 rounded-full bg-white/40 transition-all" data-index="1"></button>
+  <button class="dot w-2 h-2 rounded-full bg-white/40 transition-all" data-index="2"></button>
+</div>
+
+<style>
+@keyframes zoom{
+  from{transform:scale(1.08)}
+  to{transform:scale(1.18)}
+}
+</style>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+const progress=document.getElementById('progress');
+const current=document.getElementById('current');
+const dots=document.querySelectorAll('.dot');
+
+let index=0;
+
+function show(i){
+  slides.forEach((s,n)=>{
+    s.classList.toggle('opacity-100',n===i);
+    s.classList.toggle('opacity-0',n!==i);
+    s.classList.toggle('pointer-events-none',n!==i);
+  });
+
+  // Update counter
+  current.textContent=`0${i+1}`;
+  progress.style.width=`${(i+1)*33.33}%`;
+  
+  // Update dots
+  dots.forEach((d,n)=>{
+    d.classList.toggle('bg-white',n===i);
+    d.classList.toggle('bg-white/40',n!==i);
+    d.classList.toggle('w-6',n===i);
+    d.classList.toggle('w-2',n!==i);
+  });
+}
+
+function next(){
+  index=(index+1)%slides.length;
+  show(index);
+}
+
+function prev(){
+  index=(index-1+slides.length)%slides.length;
+  show(index);
+}
+
+document.getElementById('next').onclick=next;
+document.getElementById('prev').onclick=prev;
+
+// Dot navigation
+dots.forEach(dot=>{
+  dot.addEventListener('click',function(){
+    index=parseInt(this.dataset.index);
+    show(index);
+  });
+});
+
+// Touch swipe support
+let touchStartX=0;
+let touchEndX=0;
+
+document.querySelector('section').addEventListener('touchstart',e=>{
+  touchStartX=e.changedTouches[0].screenX;
+});
+
+document.querySelector('section').addEventListener('touchend',e=>{
+  touchEndX=e.changedTouches[0].screenX;
+  if(touchEndX<touchStartX-50) next();
+  if(touchEndX>touchStartX+50) prev();
+});
+
+// Auto play
+setInterval(next,5000);
+</script>

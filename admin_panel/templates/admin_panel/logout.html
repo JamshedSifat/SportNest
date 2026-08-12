@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout - SportNest Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center" style="background: linear-gradient(135deg, #DCFCE7 0%, #FFFFFF 100%);">
+    <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+        <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background-color: #FEE2E2;">
+            <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+            </svg>
+        </div>
+        <h2 class="text-2xl font-bold mb-2">Ready to leave?</h2>
+        <p class="text-gray-500 mb-6">Are you sure you want to logout from admin panel?</p>
+        <form method="POST" class="flex gap-3 justify-center">
+            {% csrf_token %}
+            <button type="submit" class="px-6 py-3 rounded-xl bg-red-500 text-white font-bold hover:bg-red-600 transition">
+                Yes, Logout
+            </button>
+            <a href="{% url 'admin_panel:dashboard' %}" class="px-6 py-3 rounded-xl border-2 border-gray-200 text-gray-600 font-bold hover:border-green-500 hover:text-green-500 transition">
+                Cancel
+            </a>
+        </form>
+    </div>
+</body>
+</html>

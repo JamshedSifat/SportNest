@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Confirmed! | SportNest{% endblock %}
+
+{% block content %}
+<section class="relative py-12 sm:py-20 min-h-screen overflow-hidden bg-gradient-to-b from-emerald-50 via-white to-emerald-50/40">
+    
+    <!-- Background Decorations -->
+    <div class="pointer-events-none absolute inset-0">
+        <div class="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-emerald-200/30 blur-3xl"></div>
+        <div class="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-green-200/20 blur-3xl"></div>
+    </div>
+    
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-xl mx-auto">
+            
+            <!-- Success Card -->
+            <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-2xl shadow-slate-200/50 border border-white/80 text-center">
+                
+                <!-- Animated Checkmark -->
+                <div class="relative mx-auto mb-6 w-24 h-24">
+                    <div class="absolute inset-0 bg-emerald-100 rounded-full scale-0 animate-[ping_0.8s_ease-out]"></div>
+                    <div class="relative w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-200">
+                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Heading -->
+                <h1 class="text-3xl sm:text-4xl font-black text-slate-900 mb-2">
+                    🎉 Order Confirmed!
+                </h1>
+                <p class="text-slate-500 text-lg mb-8">
+                    Thank you for your purchase! We'll process your order right away.
+                </p>
+                
+                <!-- Order Details Card -->
+                <div class="bg-gradient-to-br from-slate-50 to-emerald-50/50 rounded-2xl p-5 sm:p-6 mb-8 border border-slate-100">
+                    
+                    <!-- Order Number -->
+                    <div class="flex items-center justify-between py-3 border-b border-slate-200/70">
+                        <span class="text-slate-500 text-sm">Order Number</span>
+                        <span class="font-black text-lg text-slate-900 tracking-wider">#{{ order.order_number }}</span>
+                    </div>
+                    
+                    <!-- Date -->
+                    <div class="flex items-center justify-between py-3 border-b border-slate-200/70">
+                        <span class="text-slate-500 text-sm">Order Date</span>
+                        <span class="font-semibold text-slate-700">{{ order.created_at|date:"F j, Y" }} at {{ order.created_at|date:"g:i A" }}</span>
+                    </div>
+                    
+                    <!-- Payment Method -->
+                    <div class="flex items-center justify-between py-3 border-b border-slate-200/70">
+                        <span class="text-slate-500 text-sm">Payment</span>
+                        <span class="font-semibold text-slate-700">{{ order.get_payment_method_display }}</span>
+                    </div>
+                    
+                    <!-- Items Count -->
+                    <div class="flex items-center justify-between py-3 border-b border-slate-200/70">
+                        <span class="text-slate-500 text-sm">Items</span>
+                        <span class="font-semibold text-slate-700">{{ order.items.count }} item(s)</span>
+                    </div>
+                    
+                    <!-- Status -->
+                    <div class="flex items-center justify-between py-3 border-b border-slate-200/70">
+                        <span class="text-slate-500 text-sm">Status</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+                    
+                    <!-- Total -->
+                    <div class="flex items-center justify-between py-3">
+                        <span class="text-slate-700 font-bold">Total Amount</span>
+                        <span class="font-black text-2xl text-emerald-600">৳{{ order.total }}</span>
+                    </div>
+                    
+                </div>
+                
+                <!-- Shipping Info -->
+                <div class="bg-slate-50 rounded-2xl p-5 mb-8 text-left">
+                    <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        Shipping Address
+                    </h3>
+                    <p class="text-sm text-slate-600 font-semibold">{{ order.full_name }}</p>
+                    <p class="text-sm text-slate-500">{{ order.address }}</p>
+                    <p class="text-sm text-slate-500">{{ order.city }}{% if order.postal_code %} - {{ order.postal_code }}{% endif %}</p>
+                    <p class="text-sm text-slate-500">{{ order.phone }}</p>
+                </div>
+                
+                <!-- Order Items Preview -->
+                <div class="text-left mb-8">
+                    <h3 class="font-bold text-slate-800 mb-3">Order Items</h3>
+                    <div class="space-y-2 max-h-48 overflow-y-auto">
+                        {% for item in order.items.all %}
+                        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                            <div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
+                                {% if item.product and item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product_name }}" class="w-full h-full object-cover rounded-lg">
+                                {% else %}
+                                <span class="text-xl">📦</span>
+                                {% endif %}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-slate-700 line-clamp-1">{{ item.product_name }}</p>
+                                <p class="text-xs text-slate-400">Qty: {{ item.quantity }} × ৳{{ item.price }}</p>
+                            </div>
+                            <span class="font-bold text-sm text-emerald-600">৳{{ item.subtotal }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="{% url 'orders:order_detail' order.order_number %}" 
+                       class="flex-1 py-3.5 px-6 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm transition shadow-sm hover:shadow-lg">
+                        📋 View Order Details
+                    </a>
+                    <a href="{% url 'orders:my_orders' %}" 
+                       class="flex-1 py-3.5 px-6 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 text-slate-600 hover:text-emerald-600 font-bold text-sm transition">
+                        📦 All Orders
+                    </a>
+                </div>
+                
+                <a href="{% url 'shop:shop_home' %}" 
+                   class="inline-flex items-center gap-1 mt-6 text-sm text-slate-400 hover:text-emerald-500 font-semibold transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    Continue Shopping
+                </a>
+                
+            </div>
+            
+            <!-- Trust Badges -->
+            <div class="flex justify-center gap-6 mt-8 text-xs text-slate-400">
+                <span class="flex items-center gap-1">🔒 Secure Payment</span>
+                <span class="flex items-center gap-1">🚚 Fast Delivery</span>
+                <span class="flex items-center gap-1">🔄 Easy Returns</span>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+<style>
+@keyframes ping {
+    75%, 100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+</style>
+{% endblock %}

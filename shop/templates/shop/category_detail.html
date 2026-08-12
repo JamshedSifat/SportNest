@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }} - SportNest{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-b from-slate-50 via-white to-slate-50 min-h-screen">
+
+    <!-- Hero -->
+    <section class="relative overflow-hidden">
+        <!-- ambient gradients -->
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(16,185,129,0.18),_transparent_45%),radial-gradient(ellipse_at_bottom_right,_rgba(34,197,94,0.14),_transparent_45%)]"></div>
+
+        <!-- subtle grid -->
+        <div class="absolute inset-0 opacity-[0.05]"
+             style="background-image: linear-gradient(rgba(255,255,255,0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.22) 1px, transparent 1px); background-size: 48px 48px;">
+        </div>
+
+        <div class="relative z-10 container mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-14 sm:pb-20">
+            <div class="max-w-5xl mx-auto rounded-3xl bg-slate-900 text-white border border-white/10 shadow-2xl p-6 sm:p-10 lg:p-12">
+
+                <!-- breadcrumb -->
+                <div class="flex items-center justify-center gap-2 text-xs sm:text-sm text-slate-400 mb-7 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                    <a href="/" class="hover:text-white transition">Home</a>
+                    <span>/</span>
+                    <a href="{% url 'shop:shop_home' %}" class="hover:text-white transition">Shop</a>
+                    <span>/</span>
+                    <span class="text-emerald-400 font-semibold">{{ category.name }}</span>
+                </div>
+
+                <!-- badge -->
+                <div class="flex justify-center mb-7">
+                    <div class="inline-flex flex-wrap items-center justify-center gap-3 px-5 py-3 rounded-2xl border border-white/15 bg-white/5 backdrop-blur-xl">
+                        <span class="text-2xl">{{ category.icon }}</span>
+                        <span class="text-white/70 text-xs sm:text-sm tracking-wider uppercase font-semibold">
+                            {{ category.subcategory_count }} Leagues
+                        </span>
+                        <span class="w-1 h-1 rounded-full bg-emerald-400"></span>
+                        <span class="text-white/70 text-xs sm:text-sm font-semibold">
+                            {{ category.product_count }}+ Products
+                        </span>
+                    </div>
+                </div>
+
+                <!-- title -->
+                <h1 class="text-center text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[0.95] mb-5">
+                    {{ category.name }}
+                </h1>
+
+                <!-- desc -->
+                <p class="text-center max-w-2xl mx-auto text-slate-300 text-base sm:text-lg leading-relaxed">
+                    {{ category.description|default:"Explore our premium collection of "|add:category.name|add:" gear and equipment." }}
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subcategories -->
+    <section class="pb-16 sm:pb-20">
+        <div class="container mx-auto px-4 sm:px-6">
+
+            <!-- section heading -->
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10">
+                <div>
+                    <span class="text-emerald-600 text-xs font-bold tracking-[0.16em] uppercase">Explore</span>
+                    <h2 class="mt-2 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
+                        {{ category.name }} <span class="text-emerald-600">Leagues</span>
+                    </h2>
+                </div>
+                <p class="text-slate-500 text-sm">{{ subcategories|length }} subcategories available</p>
+            </div>
+
+            {% if subcategories %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+                {% for sub in subcategories %}
+                <a href="{% url 'shop:subcategory_detail' sub.slug %}"
+                   class="group relative rounded-2xl border border-slate-200 bg-white p-6 sm:p-7 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+
+                    <!-- hover glow -->
+                    <div class="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-emerald-200/30 blur-2xl opacity-0 group-hover:opacity-100 transition"></div>
+
+                    <div class="relative z-10">
+                        <p class="text-5xl sm:text-6xl font-black text-slate-100 group-hover:text-emerald-100 transition mb-3">
+                            {{ forloop.counter|stringformat:"02d" }}
+                        </p>
+
+                        <h3 class="text-xl sm:text-2xl font-bold text-slate-900 group-hover:text-emerald-600 transition mb-2">
+                            {{ sub.name }}
+                        </h3>
+
+                        <div class="h-0.5 w-12 bg-slate-200 group-hover:w-20 group-hover:bg-emerald-500 transition-all duration-300 mb-4"></div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-semibold text-slate-500 group-hover:text-emerald-600 transition">
+                                {{ sub.product_count }}+ Products
+                            </span>
+                            <svg class="w-5 h-5 text-emerald-500 opacity-0 translate-x-[-6px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
+                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-20">
+                <div class="text-6xl mb-4 opacity-40">{{ category.icon }}</div>
+                <h3 class="text-xl font-bold text-slate-500">No leagues yet</h3>
+                <p class="text-slate-400 mt-2">Subcategories coming soon in {{ category.name }}</p>
+            </div>
+            {% endif %}
+
+            <!-- back -->
+            <div class="text-center mt-12 sm:mt-16">
+                <a href="{% url 'shop:shop_home' %}"
+                   class="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl border border-slate-300 bg-white text-slate-700 font-semibold hover:border-emerald-500 hover:text-emerald-600 hover:shadow-md transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    Back to All Sports
+                </a>
+            </div>
+
+        </div>
+    </section>
+</div>
+
+<style>
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+{% endblock %}

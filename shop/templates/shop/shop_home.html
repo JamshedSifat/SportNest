@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Shop by Sport - SportNest{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
+
+    <!-- Hero -->
+    <section class="relative overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(16,185,129,0.18),_transparent_45%),radial-gradient(ellipse_at_bottom_left,_rgba(34,197,94,0.14),_transparent_40%)]"></div>
+
+        <div class="container mx-auto px-4 sm:px-6 pt-14 sm:pt-20 pb-14 sm:pb-20 relative z-10">
+            <div class="max-w-5xl mx-auto rounded-3xl bg-slate-900 text-white border border-white/10 shadow-2xl p-7 sm:p-10 lg:p-12 text-center">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/5 mb-6">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-xs sm:text-sm text-white/70 tracking-wider uppercase font-semibold">
+                        {{ main_categories|length }} Sports Available
+                    </span>
+                </div>
+
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[0.95] mb-4">
+                    Choose Your <span class="text-emerald-400">Sport</span>
+                </h1>
+
+                <p class="max-w-2xl mx-auto text-slate-300 text-base sm:text-lg leading-relaxed">
+                    Explore premium gear across {{ main_categories|length }} sports — curated for beginners to champions.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="pb-16 sm:pb-20">
+        <div class="container mx-auto px-4 sm:px-6">
+
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10">
+                <div>
+                    <span class="text-xs font-bold tracking-[0.16em] uppercase text-emerald-600">Browse All</span>
+                    <h2 class="mt-2 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
+                        Sports <span class="text-emerald-600">Categories</span>
+                    </h2>
+                </div>
+            </div>
+
+            {% if main_categories %}
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                {% for category in main_categories %}
+                <a href="{% url 'shop:category_detail' category.slug %}"
+                   class="group rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+
+                    <div class="relative h-48 sm:h-52 overflow-hidden bg-gradient-to-br from-emerald-500 to-emerald-700">
+                        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,white,transparent_50%)]"></div>
+                        <div class="absolute inset-0 grid place-items-center">
+                            <span class="text-7xl sm:text-8xl group-hover:scale-110 transition duration-500 drop-shadow-xl">
+                                {{ category.icon }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-5 sm:p-6">
+                        <h3 class="text-xl sm:text-2xl font-bold text-slate-900 group-hover:text-emerald-600 transition">
+                            {{ category.name }}
+                        </h3>
+
+                        <p class="text-sm text-slate-500 mt-2 line-clamp-2">
+                            {{ category.description|default:"Premium "|add:category.name|add:" equipment and gear for all levels."|truncatewords:15 }}
+                        </p>
+
+                        <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div>
+                                    <p class="text-sm font-bold text-slate-900">{{ category.subcategory_count }}</p>
+                                    <p class="text-[10px] text-slate-400 uppercase">Leagues</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-slate-900">{{ category.product_count }}+</p>
+                                    <p class="text-[10px] text-slate-400 uppercase">Products</p>
+                                </div>
+                            </div>
+                            <span class="text-emerald-600 font-semibold text-sm">Explore →</span>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-20">
+                <h3 class="text-2xl font-bold text-slate-500">No Categories Yet</h3>
+                <p class="text-slate-400 mt-2">Sports categories are being set up. Check back soon!</p>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+</div>
+{% endblock %}

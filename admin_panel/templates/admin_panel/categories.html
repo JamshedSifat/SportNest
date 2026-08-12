@@ -1,0 +1,55 @@
+{% extends 'admin_panel/admin_base.html' %}
+{% block title %}Categories{% endblock %}
+{% block page_title %}Categories{% endblock %}
+{% block page_subtitle %}Manage main categories and subcategories.{% endblock %}
+
+{% block page_actions %}
+<div class="flex gap-2">
+  <a href="{% url 'admin_panel:category_create' %}" class="px-4 py-2.5 rounded-xl bg-green-500 text-white font-semibold">+ Main Category</a>
+  <a href="{% url 'admin_panel:subcategory_create' %}" class="px-4 py-2.5 rounded-xl bg-gray-900 text-white font-semibold">+ Subcategory</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="grid lg:grid-cols-2 gap-5">
+  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+    <h3 class="font-bold text-lg mb-4">Main Categories</h3>
+    <div class="space-y-3">
+      {% for c in categories %}
+      <div class="p-4 rounded-xl border border-gray-100 flex items-center justify-between">
+        <div>
+          <p class="font-semibold">{{ c.name }}</p>
+          <p class="text-xs text-gray-500">Order: {{ c.order }} | Active: {{ c.is_active }}</p>
+        </div>
+        <div class="flex gap-2">
+          <a href="{% url 'admin_panel:category_edit' c.id %}" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600">Edit</a>
+          <a href="{% url 'admin_panel:category_delete' c.id %}" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-600">Delete</a>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-gray-400">No categories found.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+    <h3 class="font-bold text-lg mb-4">Subcategories</h3>
+    <div class="space-y-3 max-h-[600px] overflow-auto pr-1">
+      {% for s in subcategories %}
+      <div class="p-4 rounded-xl border border-gray-100 flex items-center justify-between">
+        <div>
+          <p class="font-semibold">{{ s.name }}</p>
+          <p class="text-xs text-gray-500">{{ s.main_category.name }} | Order: {{ s.order }}</p>
+        </div>
+        <div class="flex gap-2">
+          <a href="{% url 'admin_panel:subcategory_edit' s.id %}" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600">Edit</a>
+          <a href="{% url 'admin_panel:subcategory_delete' s.id %}" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-600">Delete</a>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-gray-400">No subcategories found.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
