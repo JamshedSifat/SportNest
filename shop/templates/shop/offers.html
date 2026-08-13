@@ -1,0 +1,123 @@
+<!-- shop/templates/shop/offers.html -->
+{% extends 'base.html' %}
+{% block title %}Offers & Deals | SportNest{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-white">
+
+    <!-- Hero Banner -->
+    <section class="relative py-16 sm:py-20 overflow-hidden bg-black">
+        <div class="absolute inset-0">
+            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-red-500/20 rounded-full blur-[120px] animate-pulse"></div>
+            <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-500/15 rounded-full blur-[100px]"></div>
+        </div>
+        <div class="container mx-auto px-4 sm:px-6 relative z-10 text-center">
+            <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-red-500/30 bg-red-500/10 mb-6">
+                <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                <span class="text-red-400 text-sm font-bold tracking-wider uppercase">{{ total_offers }} Active Deals</span>
+            </div>
+            <h1 class="text-5xl sm:text-7xl font-black text-white mb-4">🔥 Hot <span class="text-red-500">Offers</span></h1>
+            <p class="text-gray-400 text-lg max-w-xl mx-auto">Massive discounts on premium sports gear. Limited time only!</p>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+    </section>
+
+    <!-- Products -->
+    <section class="py-8 sm:py-12">
+        <div class="container mx-auto px-4 sm:px-6">
+            
+            <!-- Sort -->
+            <div class="flex justify-between items-center mb-6">
+                <p class="text-sm text-gray-500">
+                    Showing <b>{{ products|length }}</b> of <b>{{ total_offers }}</b> deals
+                </p>
+                <select onchange="location.href='?sort='+this.value" class="px-4 py-2.5 rounded-xl border-2 border-gray-200 text-sm cursor-pointer">
+                    <option value="discount_desc" {% if sort == 'discount_desc' %}selected{% endif %}>🔥 Biggest Discount</option>
+                    <option value="discount_asc" {% if sort == 'discount_asc' %}selected{% endif %}>Small Discount First</option>
+                    <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>💰 Price: Low-High</option>
+                    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>💎 Price: High-Low</option>
+                </select>
+            </div>
+            
+            {% if products %}
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                {% for product in products %}
+                <div class="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                    
+                    <!-- Image -->
+                    <a href="{% url 'shop:product_detail' product.slug %}" class="block aspect-square bg-gray-50 overflow-hidden relative">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-5xl opacity-30">📦</div>
+                        {% endif %}
+                        
+                        <!-- Discount Badge -->
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-red-500 text-white px-3 py-1.5 rounded-xl text-sm font-black shadow-lg animate-pulse">
+                                -{{ product.discount_percentage }}%
+                            </span>
+                        </div>
+                        
+                        <!-- Save Amount -->
+                        <div class="absolute bottom-3 left-3">
+                            <span class="bg-black/70 backdrop-blur text-white px-2.5 py-1 rounded-lg text-xs font-bold">
+                                Save ৳{{ product.savings }}
+                            </span>
+                        </div>
+                    </a>
+                    
+                    <!-- Info -->
+                    <div class="p-4 sm:p-5">
+                        <p class="text-[10px] sm:text-xs text-gray-400 uppercase font-bold tracking-widest">{{ product.brand.name|default:'' }}</p>
+                        <a href="{% url 'shop:product_detail' product.slug %}" class="block font-bold text-sm text-gray-900 mt-1 line-clamp-2 hover:text-red-500 transition">{{ product.name }}</a>
+                        
+                        <div class="flex items-center gap-2 mt-2">
+                            <span class="text-lg sm:text-xl font-black text-red-500">৳{{ product.price }}</span>
+                            <span class="text-xs text-gray-400 line-through">৳{{ product.compare_at_price }}</span>
+                        </div>
+                        
+                        <!-- Stock Progress -->
+                        {% if product.stock <= 20 %}
+                        <div class="mt-3">
+                            <div class="flex justify-between text-[10px] mb-1">
+                                <span class="text-red-500 font-bold">Only {{ product.stock }} left!</span>
+                                <span class="text-gray-400">Hurry!</span>
+                            </div>
+                            <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-red-500 rounded-full" style="width: {{ product.stock }}%"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if products.has_other_pages %}
+            <div class="flex justify-center mt-10 gap-2">
+                {% if products.has_previous %}
+                <a href="?sort={{ sort }}&page={{ products.previous_page_number }}" class="w-10 h-10 rounded-xl bg-white border flex items-center justify-center">←</a>
+                {% endif %}
+                <span class="w-10 h-10 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold">{{ products.number }}</span>
+                {% if products.has_next %}
+                <a href="?sort={{ sort }}&page={{ products.next_page_number }}" class="w-10 h-10 rounded-xl bg-white border flex items-center justify-center">→</a>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            {% else %}
+            <div class="text-center py-20">
+                <div class="text-6xl mb-4">🏷️</div>
+                <h3 class="text-xl font-black text-gray-400">No offers right now</h3>
+                <p class="text-gray-300">Check back soon for amazing deals!</p>
+            </div>
+            {% endif %}
+            
+        </div>
+    </section>
+
+</div>
+{% endblock %}

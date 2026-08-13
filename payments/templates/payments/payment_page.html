@@ -1,0 +1,114 @@
+<!-- payments/templates/payments/payment_page.html -->
+{% extends 'base.html' %}
+{% block title %}Payment | SportNest{% endblock %}
+
+{% block content %}
+<section class="py-8 sm:py-12 bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 max-w-2xl">
+        
+        <h1 class="text-3xl font-black text-gray-900 mb-2">💳 Payment</h1>
+        <p class="text-gray-500 mb-8">Order #{{ order.order_number }} · Total: <span class="font-black text-green-600 text-xl">৳{{ order.total }}</span></p>
+        
+        <form method="POST" action="{% url 'payments:process_payment' order.order_number %}" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Payment Method Selection -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border">
+                <h3 class="font-bold text-lg mb-4">Select Payment Method</h3>
+                
+                <div class="space-y-3">
+                    <!-- COD -->
+                    <label class="flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all payment-option" data-method="COD">
+                        <input type="radio" name="payment_method" value="COD" checked class="w-5 h-5 text-green-500">
+                        <div class="flex-1">
+                            <p class="font-bold">💰 Cash on Delivery</p>
+                            <p class="text-xs text-gray-400">Pay when you receive your order</p>
+                        </div>
+                        <span class="text-2xl">💵</span>
+                    </label>
+                    
+                    <!-- bKash -->
+                    <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 cursor-pointer hover:border-green-200 transition payment-option" data-method="BKASH">
+                        <input type="radio" name="payment_method" value="BKASH" class="w-5 h-5 text-green-500">
+                        <div class="flex-1">
+                            <p class="font-bold">📱 bKash</p>
+                            <p class="text-xs text-gray-400">Send money via bKash</p>
+                        </div>
+                        <span class="text-2xl">💳</span>
+                    </label>
+                    
+                    <!-- Nagad -->
+                    <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 cursor-pointer hover:border-green-200 transition payment-option" data-method="NAGAD">
+                        <input type="radio" name="payment_method" value="NAGAD" class="w-5 h-5 text-green-500">
+                        <div class="flex-1">
+                            <p class="font-bold">📱 Nagad</p>
+                            <p class="text-xs text-gray-400">Send money via Nagad</p>
+                        </div>
+                        <span class="text-2xl">💳</span>
+                    </label>
+                    
+                    <!-- Rocket -->
+                    <label class="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 cursor-pointer hover:border-green-200 transition payment-option" data-method="ROCKET">
+                        <input type="radio" name="payment_method" value="ROCKET" class="w-5 h-5 text-green-500">
+                        <div class="flex-1">
+                            <p class="font-bold">🚀 Rocket</p>
+                            <p class="text-xs text-gray-400">Send money via Rocket</p>
+                        </div>
+                        <span class="text-2xl">💳</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Mobile Banking Info (Hidden by default) -->
+            <div id="mobileBankingInfo" class="hidden bg-white rounded-2xl p-6 shadow-sm border">
+                <h3 class="font-bold text-lg mb-4">Payment Details</h3>
+                
+                <div id="bankingInstructions" class="mb-4 p-4 bg-yellow-50 rounded-xl text-sm text-yellow-800">
+                    Please send exactly <b>৳{{ order.total }}</b> to the merchant number below, then fill in the transaction ID.
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Your Phone Number *</label>
+                        <input type="tel" name="phone_number" placeholder="01XXXXXXXXX" 
+                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Transaction ID *</label>
+                        <input type="text" name="sender_transaction_id" placeholder="TRX123456789" 
+                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none uppercase">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Submit -->
+            <button type="submit" class="w-full py-4 rounded-2xl bg-green-500 text-white font-black text-lg hover:bg-green-600 hover:shadow-xl transition">
+                Complete Payment →
+            </button>
+        </form>
+        
+    </div>
+</section>
+
+<script>
+// Show/hide mobile banking info based on selection
+document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const info = document.getElementById('mobileBankingInfo');
+        if (['BKASH', 'NAGAD', 'ROCKET'].includes(this.value)) {
+            info.classList.remove('hidden');
+        } else {
+            info.classList.add('hidden');
+        }
+        
+        // Highlight selected
+        document.querySelectorAll('.payment-option').forEach(opt => {
+            opt.classList.remove('border-green-500', 'bg-green-50');
+            opt.classList.add('border-gray-200');
+        });
+        this.closest('.payment-option').classList.add('border-green-500', 'bg-green-50');
+        this.closest('.payment-option').classList.remove('border-gray-200');
+    });
+});
+</script>
+{% endblock %}

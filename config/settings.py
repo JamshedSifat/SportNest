@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     'shop',
     'cart',
     'orders',
-    # 'payments',
+    'payments',
     # 'dashboard',
     'admin_panel',
 ]
@@ -71,6 +71,17 @@ TEMPLATES = [
     },
 ]
 
+
+# # Email Settings
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = '23101055@uap-bd.edu' 
+# EMAIL_HOST_PASSWORD = 'arnk csyc fxzj yydr'  
+# DEFAULT_FROM_EMAIL = 'SportNest <yourname@gmail.com>'
+# ADMIN_EMAIL = 'yourname@gmail.com'
+
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
@@ -80,6 +91,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.User'

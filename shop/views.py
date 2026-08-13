@@ -34,65 +34,71 @@ def category_detail(request, slug):
     }
     return render(request, 'shop/category_detail.html', context)
 
-
 def subcategory_detail(request, slug):
     """Show products of a subcategory with filter/sort/search"""
     subcategory = get_object_or_404(SubCategory, slug=slug, is_active=True)
     products_qs = subcategory.products.filter(is_active=True).select_related('brand')
-
-    # query params
+    
+    # ============ QUERY PARAMS ============
     q = request.GET.get('q', '').strip()
     brand = request.GET.get('brand', '').strip()
-    stock = request.GET.get('stock', '').strip()  # in/out
+    stock = request.GET.get('stock', '').strip()
     min_price = request.GET.get('min_price', '').strip()
     max_price = request.GET.get('max_price', '').strip()
     sort = request.GET.get('sort', 'newest').strip()
-
+    
+    # ============ SEARCH ============
     if q:
         products_qs = products_qs.filter(
             Q(name__icontains=q) |
             Q(description__icontains=q) |
             Q(brand__name__icontains=q)
         )
-
+    
+    # ============ BRAND FILTER ============
     if brand:
         products_qs = products_qs.filter(brand__slug=brand)
-
+    
+    # ============ STOCK FILTER ============
     if stock == 'in':
         products_qs = products_qs.filter(stock__gt=0)
     elif stock == 'out':
         products_qs = products_qs.filter(stock__lte=0)
-
+    
+    # ============ PRICE FILTER ============
     if min_price:
         try:
-            products_qs = products_qs.filter(price__gte=min_price)
-        except Exception:
+            products_qs = products_qs.filter(price__gte=float(min_price))
+        except (ValueError, TypeError):
             pass
-
+    
     if max_price:
         try:
-            products_qs = products_qs.filter(price__lte=max_price)
-        except Exception:
+            products_qs = products_qs.filter(price__lte=float(max_price))
+        except (ValueError, TypeError):
             pass
-
+    
+    # ============ SORTING ============
     sort_map = {
         'newest': '-created_at',
+        'oldest': 'created_at',
         'price_asc': 'price',
         'price_desc': '-price',
         'name_asc': 'name',
         'name_desc': '-name',
     }
     products_qs = products_qs.order_by(sort_map.get(sort, '-created_at'))
-
+    
+    # ============ PAGINATION ============
     paginator = Paginator(products_qs, 12)
     page = request.GET.get('page')
     products = paginator.get_page(page)
-
-    # brands for filter dropdown
+    
+    # ============ BRANDS FOR FILTER DROPDOWN ============
     brands = subcategory.products.filter(
         is_active=True, brand__isnull=False
     ).select_related('brand').values_list('brand__name', 'brand__slug').distinct()
-
+    
     context = {
         'subcategory': subcategory,
         'products': products,
@@ -236,3 +242,16 @@ def all_products(request):
         'sort': sort,
     }
     return render(request, 'shop/all_products.html', context)
+
+
+def offers_page(request):
+    """Show all products with discounts/offers"""
+    products_qs = Product.objects.filter(is_active=True, discount_percentage__gt=0).select_related('brand', 'subcategory__main_category').order_by('-discount_percentage')
+    sort = request.GET.get('sort', 'discount_desc').strip()
+    sort_map = {'discount_desc': '-discount_percentage', 'discount_asc': 'discount_percentage', 'price_asc': 'price', 'price_desc': '-price'}
+    products_qs = products_qs.order_by(sort_map.get(sort, '-discount_percentage'))
+    paginator = Paginator(products_qs, 12)
+    page = request.GET.get('page')
+    products = paginator.get_page(page)
+    context = {'products': products, 'sort': sort, 'total_offers': Product.objects.filter(is_active=True, discount_percentage__gt=0).count()}
+    return render(request, 'shop/offers.html', context)

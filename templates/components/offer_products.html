@@ -1,0 +1,129 @@
+<!-- templates/components/offer_products.html -->
+{% load static %}
+
+<section class="py-12 sm:py-16 bg-white">
+    <div class="container mx-auto px-4 sm:px-6">
+        
+        <!-- Header -->
+        <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+            <div>
+                <span class="text-xs font-bold tracking-widest uppercase text-red-500">Limited Time</span>
+                <h2 class="text-3xl sm:text-4xl font-black text-gray-900 mt-1">🔥 Hot Deals</h2>
+            </div>
+            <a href="{% url 'shop:offers' %}" class="flex items-center gap-2 px-5 py-3 rounded-xl bg-red-500 text-white font-bold text-sm hover:bg-red-600 hover:shadow-lg transition">
+                View All Offers
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+        </div>
+        
+        {% if offer_products %}
+        <!-- Products Grid - Mobile 2 cols, Tablet 3, Desktop 5 -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
+            {% for product in offer_products %}
+            <div class="group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                <a href="{% url 'shop:product_detail' product.slug %}" class="block aspect-square bg-gray-50 overflow-hidden relative">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-5xl opacity-30">📦</div>
+                    {% endif %}
+                    
+                    <!-- Discount Badge -->
+                    <span class="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-lg text-[10px] sm:text-xs font-black shadow-lg animate-pulse">
+                        -{{ product.discount_percentage }}%
+                    </span>
+                    
+                    <!-- Save Badge -->
+                    <span class="absolute bottom-2 left-2 bg-black/70 backdrop-blur text-white px-2 py-0.5 rounded-lg text-[9px] sm:text-[10px] font-bold">
+                        Save ৳{{ product.savings }}
+                    </span>
+                </a>
+                
+                <div class="p-2.5 sm:p-3">
+                    <p class="text-[9px] sm:text-[10px] text-gray-400 uppercase font-bold tracking-wider truncate">
+                        {{ product.brand.name|default:'SportNest' }}
+                    </p>
+                    <h3 class="font-bold text-xs sm:text-sm line-clamp-2 mt-0.5 leading-snug">
+                        {{ product.name }}
+                    </h3>
+                    <div class="flex items-center gap-1.5 mt-1.5">
+                        <span class="text-sm sm:text-base font-black text-red-500">৳{{ product.price }}</span>
+                        <span class="text-[10px] sm:text-xs text-gray-400 line-through">৳{{ product.compare_at_price }}</span>
+                    </div>
+                    
+                    <!-- Add to Cart Quick Button -->
+                    <button onclick="addToCart({{ product.id }}, this)" 
+                            class="mt-2 w-full py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-bold transition-all active:scale-95">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- No Offers -->
+        <div class="text-center py-12">
+            <div class="text-5xl mb-3">🏷️</div>
+            <p class="text-gray-400">No active offers right now. Check back soon!</p>
+        </div>
+        {% endif %}
+        
+    </div>
+</section>
+
+<script>
+function getCSRF() {
+    return document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+           document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
+}
+function addToCart(productId, button) {
+    button.disabled = true;
+    button.style.opacity = '0.7';
+    
+    const plusIcon = button.querySelector('.plus-icon');
+    const checkIcon = button.querySelector('.check-icon');
+    
+    fetch(`/cart/add/${productId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCSRF(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: 'quantity=1'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            if (plusIcon && checkIcon) {
+                plusIcon.classList.add('hidden');
+                checkIcon.classList.remove('hidden');
+            }
+            button.style.backgroundColor = '#16A34A';
+            
+            // ✅ INSTANT CART COUNT UPDATE
+            updateCartCountDisplay(data.cart_count);
+            
+            setTimeout(() => {
+                if (plusIcon && checkIcon) {
+                    plusIcon.classList.remove('hidden');
+                    checkIcon.classList.add('hidden');
+                }
+                button.style.backgroundColor = '#22C55E';
+                button.disabled = false;
+                button.style.opacity = '1';
+            }, 1500);
+        } else {
+            button.disabled = false;
+            button.style.opacity = '1';
+        }
+    })
+    .catch(err => {
+        button.disabled = false;
+        button.style.opacity = '1';
+    });
+}
+
+</script>

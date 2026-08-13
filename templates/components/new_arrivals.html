@@ -1,0 +1,127 @@
+{% load static %}
+
+<section class="py-12 sm:py-16 bg-gray-50">
+    <div class="container mx-auto px-4 sm:px-6">
+        
+        <!-- Header -->
+        <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+            <div>
+                <span class="text-xs font-bold tracking-widest uppercase text-green-500">Just In</span>
+                <h2 class="text-3xl sm:text-4xl font-black text-gray-900 mt-1">🆕 New Arrivals</h2>
+            </div>
+            <a href="{% url 'shop:all_products' %}" class="flex items-center gap-2 px-5 py-3 rounded-xl bg-green-500 text-white font-bold text-sm hover:bg-green-600 hover:shadow-lg transition">
+                View All Products
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
+        </div>
+        
+        {% if new_arrivals %}
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {% for product in new_arrivals %}
+            <div class="group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                
+                <!-- Image -->
+                <a href="{% url 'shop:product_detail' product.slug %}" class="block aspect-square bg-gray-50 overflow-hidden relative">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-5xl opacity-30">📦</div>
+                    {% endif %}
+                    
+                    <!-- New Badge -->
+                    <span class="absolute top-3 left-3 bg-green-500 text-white px-2.5 py-1 rounded-xl text-xs font-black shadow-lg">
+                        NEW
+                    </span>
+                    
+                    <!-- Discount if any -->
+                    {% if product.discount_percentage > 0 %}
+                    <span class="absolute bottom-3 left-3 bg-red-500 text-white px-2 py-1 rounded-lg text-[10px] font-black">
+                        -{{ product.discount_percentage }}%
+                    </span>
+                    {% endif %}
+                    
+                    <!-- Wishlist -->
+                    <button class="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-red-50 hover:text-red-500 shadow-lg">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </button>
+                </a>
+                
+                <!-- Info -->
+                <div class="p-3 sm:p-4">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider truncate">
+                        {{ product.brand.name|default:'SportNest' }}
+                    </p>
+                    <a href="{% url 'shop:product_detail' product.slug %}" class="block font-bold text-xs sm:text-sm line-clamp-2 mt-1 hover:text-green-600 transition">
+                        {{ product.name }}
+                    </a>
+                    
+                    <!-- Rating -->
+                    <div class="flex items-center gap-1 mt-1.5">
+                        <span class="text-amber-400 text-[10px] sm:text-xs">★★★★★</span>
+                        <span class="text-[10px] text-gray-400">(New)</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mt-2">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-sm sm:text-base font-black text-green-600">৳{{ product.price }}</span>
+                            {% if product.compare_at_price %}
+                            <span class="text-[10px] sm:text-xs text-gray-400 line-through">৳{{ product.compare_at_price }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Quick Add -->
+                        <button onclick="addToCart({{ product.id }}, this)" 
+                                class="w-8 h-8 sm:w-9 sm:h-9 bg-green-500 hover:bg-green-600 rounded-xl flex items-center justify-center text-white transition-all active:scale-90">
+                            <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <div class="text-5xl mb-3">📦</div>
+            <p class="text-gray-400">New products coming soon!</p>
+        </div>
+        {% endif %}
+        
+    </div>
+</section>
+
+<script>
+function getCSRF() {
+    return document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+           document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
+}
+
+function addToCart(productId, button) {
+    fetch(`/cart/add/${productId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCSRF(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: 'quantity=1'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            button.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>';
+            button.style.backgroundColor = '#16A34A';
+            setTimeout(() => {
+                button.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>';
+                button.style.backgroundColor = '#22C55E';
+            }, 1500);
+        }
+    });
+}
+</script>

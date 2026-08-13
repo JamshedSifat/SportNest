@@ -1,4 +1,4 @@
-
+<!-- shop/templates/shop/all_products.html -->
 {% extends 'base.html' %}
 {% block title %}All Products | SportNest{% endblock %}
 
@@ -33,22 +33,42 @@
     <div class="sticky top-[72px] z-30 bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-sm">
         <div class="container mx-auto px-4 sm:px-6 py-4">
             <div class="flex flex-col sm:flex-row gap-3 items-center">
-                <form method="GET" class="flex-1 w-full">
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-400 group-focus-within:text-green-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
+                
+                <!-- Search Form with Button -->
+                <form method="GET" action="{% url 'shop:all_products' %}" class="flex-1 w-full">
+                    <div class="flex gap-2">
+                        <div class="relative group flex-1">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400 group-focus-within:text-green-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </div>
+                            <input type="text" name="q" value="{{ q }}" placeholder="Search products..." 
+                                   class="w-full pl-12 pr-10 py-3 rounded-2xl border-2 border-gray-200 bg-gray-50 text-sm focus:border-green-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-50 transition-all duration-300">
+                            
+                            {% if q %}
+                            <a href="{% url 'shop:all_products' %}" class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-red-500 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </a>
+                            {% endif %}
                         </div>
-                        <input type="text" name="q" value="{{ q }}" placeholder="Search products..." 
-                               class="w-full pl-12 pr-4 py-3 rounded-2xl border-2 border-gray-200 bg-gray-50 text-sm focus:border-green-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-50 transition-all duration-300">
-                        {% if q %}
-                        <a href="{% url 'shop:all_products' %}" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-red-500 transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                        </a>
-                        {% endif %}
+                        
+                        <button type="submit" 
+                                class="px-4 sm:px-6 py-3 rounded-2xl bg-green-500 hover:bg-green-600 text-white font-bold text-sm transition-all duration-300 hover:shadow-lg active:scale-95 flex items-center gap-2 flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <span class="hidden sm:inline">Search</span>
+                        </button>
                     </div>
+                    {% if sort %}
+                    <input type="hidden" name="sort" value="{{ sort }}">
+                    {% endif %}
                 </form>
+                
+                <!-- Sort -->
                 <div class="flex gap-2 w-full sm:w-auto">
                     <select name="sort" onchange="location.href='?q={{ q }}&sort='+this.value" 
                             class="flex-1 sm:flex-none px-4 py-3 rounded-2xl border-2 border-gray-200 text-sm bg-white cursor-pointer hover:border-green-300 transition font-medium">
@@ -84,9 +104,11 @@
                             <span class="text-6xl opacity-20 group-hover:scale-125 transition-transform duration-700">📦</span>
                         </div>
                         {% endif %}
+                        
                         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500 flex items-center justify-center">
                             <span class="px-6 py-3 bg-white text-black font-bold rounded-xl opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 shadow-xl">Quick View</span>
                         </div>
+                        
                         <div class="absolute top-3 left-3 flex flex-col gap-1.5">
                             {% if product.discount_percentage > 0 %}
                             <span class="bg-red-500 text-white px-2.5 py-1 rounded-xl text-[11px] font-black shadow-lg">-{{ product.discount_percentage }}%</span>
@@ -95,9 +117,13 @@
                             <span class="bg-black text-white px-2.5 py-1 rounded-xl text-[11px] font-black shadow-lg">NEW</span>
                             {% endif %}
                         </div>
+                        
                         <button class="absolute top-3 right-3 w-9 h-9 bg-white/90 backdrop-blur rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-red-50 hover:text-red-500 shadow-lg">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
                         </button>
+                        
                         <div class="absolute bottom-3 left-3">
                             {% if product.is_in_stock %}
                             <span class="bg-green-500/90 backdrop-blur text-white px-2.5 py-1 rounded-xl text-[10px] font-bold shadow-lg">In Stock</span>
@@ -110,12 +136,12 @@
                     <div class="p-4 sm:p-5">
                         <p class="text-[10px] sm:text-xs text-gray-400 uppercase font-bold tracking-widest mb-1">{{ product.brand.name|default:'SportNest' }}</p>
                         <a href="{% url 'shop:product_detail' product.slug %}" class="block font-bold text-sm sm:text-base text-gray-900 mb-3 line-clamp-2 leading-snug group-hover:text-green-600 transition-colors">{{ product.name }}</a>
+                        
                         <div class="flex items-center gap-1.5 mb-3">
                             <div class="flex text-amber-400 text-xs">★★★★★</div>
                             <span class="text-[10px] text-gray-400">(0)</span>
                         </div>
                         
-                        <!-- Price & Add to Cart -->
                         <div class="flex items-end justify-between">
                             <div>
                                 <span class="text-lg sm:text-xl font-black text-green-600">৳{{ product.price }}</span>
@@ -125,7 +151,6 @@
                             </div>
                             
                             {% if product.is_in_stock %}
-                            <!-- ============ ADD TO CART BUTTON ============ -->
                             <button onclick="addToCart({{ product.id }}, this)" 
                                     class="add-cart-btn w-9 h-9 sm:w-10 sm:h-10 bg-green-500 hover:bg-green-600 rounded-xl flex items-center justify-center text-white transition-all duration-300 hover:shadow-lg hover:scale-110 active:scale-90 relative">
                                 <svg class="w-4 h-4 sm:w-5 sm:h-5 plus-icon pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -190,7 +215,7 @@
 
 </div>
 
-<!-- ============ TOAST NOTIFICATION ============ -->
+<!-- Toast Notification -->
 <div id="cartToast" class="fixed bottom-24 right-4 z-50 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 translate-y-40 opacity-0 transition-all duration-500 flex items-center gap-3 max-w-sm pointer-events-none">
     <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,7 +229,6 @@
     <a href="{% url 'cart:cart_detail' %}" class="text-xs font-bold text-green-500 hover:text-green-600 whitespace-nowrap pointer-events-auto">View Cart</a>
 </div>
 
-<!-- ============ SCRIPTS ============ -->
 <script>
 function getCSRF() {
     return document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
@@ -230,16 +254,20 @@ function addToCart(productId, button) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            plusIcon.classList.add('hidden');
-            checkIcon.classList.remove('hidden');
+            if (plusIcon && checkIcon) {
+                plusIcon.classList.add('hidden');
+                checkIcon.classList.remove('hidden');
+            }
             button.style.backgroundColor = '#16A34A';
             
-            showToast(data.message);
-            updateCartCount(data.cart_count);
+            // ✅ INSTANT CART COUNT UPDATE
+            updateCartCountDisplay(data.cart_count);
             
             setTimeout(() => {
-                plusIcon.classList.remove('hidden');
-                checkIcon.classList.add('hidden');
+                if (plusIcon && checkIcon) {
+                    plusIcon.classList.remove('hidden');
+                    checkIcon.classList.add('hidden');
+                }
                 button.style.backgroundColor = '#22C55E';
                 button.disabled = false;
                 button.style.opacity = '1';
@@ -254,15 +282,12 @@ function addToCart(productId, button) {
         button.style.opacity = '1';
     });
 }
-
 function showToast(message) {
     const toast = document.getElementById('cartToast');
     document.getElementById('toastMessage').textContent = message || 'Item added to cart';
-    
     toast.classList.remove('translate-y-40', 'opacity-0', 'pointer-events-none');
     toast.classList.add('translate-y-0', 'opacity-100');
     toast.style.pointerEvents = 'auto';
-    
     clearTimeout(toast._timeout);
     toast._timeout = setTimeout(() => {
         toast.classList.add('translate-y-40', 'opacity-0');

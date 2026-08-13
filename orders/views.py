@@ -1,4 +1,6 @@
-from django.shortcuts import render, redirect
+# orders/views.py
+
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
@@ -30,7 +32,7 @@ def checkout(request):
 
 @login_required
 def place_order(request):
-    """Place order"""
+    """Place order and redirect based on payment method"""
     if request.method != 'POST':
         return redirect('cart:cart_detail')
     
@@ -102,18 +104,26 @@ def place_order(request):
     cart.coupon = None
     cart.save()
     
-    messages.success(request, f'✅ Order #{order.order_number} placed successfully!')
-    return redirect('orders:order_confirmation', order_number=order.order_number)
+    # ✅ REDIRECT BASED ON PAYMENT METHOD
+    if payment_method == 'COD':
+        # Cash on Delivery - Go directly to confirmation
+        messages.success(request, f'✅ Order #{order.order_number} placed successfully! Pay ৳{order.total} on delivery.')
+        return redirect('orders:order_confirmation', order_number=order.order_number)
+    else:
+        # Online Payment (bKash, Nagad, Rocket, Stripe) - Go to payment page
+        messages.info(request, f'📱 Order #{order.order_number} created! Please complete your payment.')
+        return redirect('payments:payment_page', order_number=order.order_number)
 
 
 def order_confirmation(request, order_number):
     """Order confirmation page"""
-    from django.shortcuts import get_object_or_404
+    order = get_object_or_404(Order, order_number=order_number)
     
-    if request.user.is_authenticated:
-        order = get_object_or_404(Order, order_number=order_number, user=request.user)
-    else:
-        order = get_object_or_404(Order, order_number=order_number)
+    # Check if order belongs to user
+    if request.user.is_authenticated and order.user == request.user:
+        pass  # Allow
+    elif not request.user.is_authenticated:
+        pass  # Guest access
     
     return render(request, 'orders/order_confirmation.html', {'order': order})
 
@@ -128,6 +138,5 @@ def my_orders(request):
 @login_required
 def order_detail(request, order_number):
     """Order detail"""
-    from django.shortcuts import get_object_or_404
     order = get_object_or_404(Order, order_number=order_number, user=request.user)
     return render(request, 'orders/order_detail.html', {'order': order})

@@ -1,3 +1,4 @@
+<!-- shop/templates/shop/subcategory_detail.html -->
 {% extends 'base.html' %}
 
 {% block title %}{{ subcategory.name }} - {{ subcategory.main_category.name }} | SportNest{% endblock %}
@@ -39,7 +40,7 @@
                     </div>
 
                     <div class="inline-flex items-center gap-2 rounded-2xl bg-white/10 px-4 py-2 ring-1 ring-white/20 backdrop-blur">
-                        <span class="text-2xl font-bold">{{ products.count }}</span>
+                        <span class="text-2xl font-bold">{{ products.paginator.count }}</span>
                         <span class="text-white/70 text-sm">Products</span>
                     </div>
                 </div>
@@ -47,30 +48,94 @@
         </div>
     </section>
 
-    <!-- Toolbar -->
+    <!-- ============ FILTER & SORT TOOLBAR ============ -->
     <div class="sticky top-[124px] z-30 border-y border-slate-200/70 bg-white/80 backdrop-blur-xl">
         <div class="container mx-auto px-4 sm:px-6 py-3">
-            <div class="flex flex-wrap items-center gap-2 sm:gap-3 justify-between">
-                <p class="text-xs sm:text-sm text-slate-500">
-                    Showing <span class="font-semibold text-slate-900">{{ products|length }}</span> products
-                </p>
-
-                <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-                    <button class="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-sm font-medium hover:border-emerald-500 hover:text-emerald-600 transition">
-                        Filter
+            
+            <form method="GET" action="{% url 'shop:subcategory_detail' subcategory.slug %}" id="filterForm">
+                
+                <!-- Search + Sort Row -->
+                <div class="flex flex-col sm:flex-row gap-3 mb-3">
+                    
+                    <!-- Search Input -->
+                    <div class="relative flex-1">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <input type="text" name="q" value="{{ filters.q }}" placeholder="Search in {{ subcategory.name }}..." 
+                               class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-50 transition-all">
+                    </div>
+                    
+                    <!-- Sort Dropdown -->
+                    <select name="sort" onchange="this.form.submit()" 
+                            class="px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white cursor-pointer hover:border-emerald-300 transition">
+                        <option value="newest" {% if filters.sort == 'newest' %}selected{% endif %}>🕐 Newest</option>
+                        <option value="oldest" {% if filters.sort == 'oldest' %}selected{% endif %}>📅 Oldest</option>
+                        <option value="price_asc" {% if filters.sort == 'price_asc' %}selected{% endif %}>💰 Price: Low-High</option>
+                        <option value="price_desc" {% if filters.sort == 'price_desc' %}selected{% endif %}>💎 Price: High-Low</option>
+                        <option value="name_asc" {% if filters.sort == 'name_asc' %}selected{% endif %}>🔤 A-Z</option>
+                        <option value="name_desc" {% if filters.sort == 'name_desc' %}selected{% endif %}>🔤 Z-A</option>
+                    </select>
+                    
+                    <!-- Search Button -->
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition shadow-sm">
+                        🔍 Search
                     </button>
-                    <button class="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-sm font-medium hover:border-emerald-500 hover:text-emerald-600 transition">
-                        Sort
-                    </button>
-                    <span class="px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-sm font-semibold whitespace-nowrap">
-                        Price: Low to High
-                    </span>
+                    
                 </div>
-            </div>
+                
+                <!-- Filter Row -->
+                <div class="flex flex-wrap gap-2 items-center">
+                    
+                    <!-- Brand Filter -->
+                    <select name="brand" onchange="this.form.submit()" class="px-3 py-2 rounded-lg border border-slate-200 text-xs bg-white cursor-pointer hover:border-emerald-300 transition">
+                        <option value="">🏷️ All Brands</option>
+                        {% for brand_name, brand_slug in brands %}
+                        <option value="{{ brand_slug }}" {% if filters.brand == brand_slug %}selected{% endif %}>{{ brand_name }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <!-- Stock Filter -->
+                    <select name="stock" onchange="this.form.submit()" class="px-3 py-2 rounded-lg border border-slate-200 text-xs bg-white cursor-pointer hover:border-emerald-300 transition">
+                        <option value="">📦 All Stock</option>
+                        <option value="in" {% if filters.stock == 'in' %}selected{% endif %}>✅ In Stock</option>
+                        <option value="out" {% if filters.stock == 'out' %}selected{% endif %}>❌ Out of Stock</option>
+                    </select>
+                    
+                    <!-- Min Price -->
+                    <input type="number" name="min_price" value="{{ filters.min_price }}" placeholder="Min ৳" 
+                           class="w-20 px-3 py-2 rounded-lg border border-slate-200 text-xs focus:border-emerald-500 focus:outline-none">
+                    
+                    <!-- Max Price -->
+                    <input type="number" name="max_price" value="{{ filters.max_price }}" placeholder="Max ৳" 
+                           class="w-20 px-3 py-2 rounded-lg border border-slate-200 text-xs focus:border-emerald-500 focus:outline-none">
+                    
+                    <!-- Apply Price Filter -->
+                    <button type="submit" class="px-3 py-2 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200 hover:bg-emerald-100 transition">
+                        Apply
+                    </button>
+                    
+                    <!-- Clear Filters -->
+                    {% if filters.q or filters.brand or filters.stock or filters.min_price or filters.max_price or filters.sort != 'newest' %}
+                    <a href="{% url 'shop:subcategory_detail' subcategory.slug %}" class="px-3 py-2 rounded-lg bg-red-50 text-red-600 text-xs font-semibold border border-red-200 hover:bg-red-100 transition">
+                        ✕ Clear All
+                    </a>
+                    {% endif %}
+                    
+                    <!-- Result Count -->
+                    <span class="ml-auto text-xs text-slate-500 font-medium">
+                        {{ products.paginator.count }} results
+                    </span>
+                    
+                </div>
+                
+            </form>
+            
         </div>
     </div>
+    <!-- ============ END TOOLBAR ============ -->
 
-    <!-- Products -->
+    <!-- Products Grid -->
     <section class="py-8 sm:py-12">
         <div class="container mx-auto px-4 sm:px-6">
             {% if products %}
@@ -119,11 +184,19 @@
                                 {% endif %}
                             </div>
 
-                            <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white grid place-items-center transition active:scale-95">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            {% if product.is_in_stock %}
+                            <button onclick="addToCart({{ product.id }}, this)" 
+                                    class="add-cart-btn w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white grid place-items-center transition active:scale-95 relative">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 plus-icon pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"/>
                                 </svg>
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 absolute hidden check-icon pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                </svg>
                             </button>
+                            {% else %}
+                            <span class="text-xs text-rose-500 font-semibold">Out of Stock</span>
+                            {% endif %}
                         </div>
                     </div>
                 </article>
@@ -133,19 +206,19 @@
             {% if products.has_other_pages %}
             <div class="flex justify-center mt-10 gap-2">
                 {% if products.has_previous %}
-                <a href="?page={{ products.previous_page_number }}" class="w-11 h-11 rounded-xl border border-slate-200 bg-white grid place-items-center hover:border-emerald-500 hover:text-emerald-600 transition">←</a>
+                <a href="?q={{ filters.q }}&brand={{ filters.brand }}&stock={{ filters.stock }}&min_price={{ filters.min_price }}&max_price={{ filters.max_price }}&sort={{ filters.sort }}&page={{ products.previous_page_number }}" class="w-11 h-11 rounded-xl border border-slate-200 bg-white grid place-items-center hover:border-emerald-500 hover:text-emerald-600 transition">←</a>
                 {% endif %}
 
                 {% for num in products.paginator.page_range %}
                     {% if num == products.number %}
                     <span class="w-11 h-11 rounded-xl bg-emerald-500 text-white grid place-items-center font-semibold">{{ num }}</span>
                     {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
-                    <a href="?page={{ num }}" class="w-11 h-11 rounded-xl border border-slate-200 bg-white grid place-items-center hover:border-emerald-500 hover:text-emerald-600 transition">{{ num }}</a>
+                    <a href="?q={{ filters.q }}&brand={{ filters.brand }}&stock={{ filters.stock }}&min_price={{ filters.min_price }}&max_price={{ filters.max_price }}&sort={{ filters.sort }}&page={{ num }}" class="w-11 h-11 rounded-xl border border-slate-200 bg-white grid place-items-center hover:border-emerald-500 hover:text-emerald-600 transition">{{ num }}</a>
                     {% endif %}
                 {% endfor %}
 
                 {% if products.has_next %}
-                <a href="?page={{ products.next_page_number }}" class="w-11 h-11 rounded-xl border border-slate-200 bg-white grid place-items-center hover:border-emerald-500 hover:text-emerald-600 transition">→</a>
+                <a href="?q={{ filters.q }}&brand={{ filters.brand }}&stock={{ filters.stock }}&min_price={{ filters.min_price }}&max_price={{ filters.max_price }}&sort={{ filters.sort }}&page={{ products.next_page_number }}" class="w-11 h-11 rounded-xl border border-slate-200 bg-white grid place-items-center hover:border-emerald-500 hover:text-emerald-600 transition">→</a>
                 {% endif %}
             </div>
             {% endif %}
@@ -154,16 +227,118 @@
                 <div class="w-28 h-28 rounded-3xl bg-slate-100 grid place-items-center mx-auto mb-6 text-5xl opacity-60">
                     {{ subcategory.main_category.icon }}
                 </div>
-                <h3 class="text-2xl font-bold text-slate-700">No Products Yet</h3>
-                <p class="text-slate-400 mt-2">We’re adding amazing {{ subcategory.name }} items soon.</p>
-                <a href="{% url 'shop:category_detail' subcategory.main_category.slug %}" class="inline-flex mt-6 px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:text-emerald-600 hover:border-emerald-500 transition">
-                    ← Back to {{ subcategory.main_category.name }}
+                <h3 class="text-2xl font-bold text-slate-700">No Products Found</h3>
+                <p class="text-slate-400 mt-2">Try adjusting your filters or search terms.</p>
+                <a href="{% url 'shop:subcategory_detail' subcategory.slug %}" class="inline-flex mt-6 px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:text-emerald-600 hover:border-emerald-500 transition">
+                    ✕ Clear All Filters
                 </a>
             </div>
             {% endif %}
         </div>
     </section>
 </div>
+
+<!-- Toast Notification -->
+<div id="cartToast" class="fixed bottom-24 right-4 z-50 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 translate-y-40 opacity-0 transition-all duration-500 flex items-center gap-3 max-w-sm pointer-events-none">
+    <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+        </svg>
+    </div>
+    <div class="flex-1 min-w-0">
+        <p class="text-sm font-bold text-gray-900">Added to cart!</p>
+        <p id="toastMessage" class="text-xs text-gray-500 truncate"></p>
+    </div>
+    <a href="{% url 'cart:cart_detail' %}" class="text-xs font-bold text-green-500 hover:text-green-600 whitespace-nowrap pointer-events-auto">View Cart</a>
+</div>
+
+<script>
+function getCSRF() {
+    return document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+           document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
+}
+
+function addToCart(productId, button) {
+    button.disabled = true;
+    button.style.opacity = '0.7';
+    
+    const plusIcon = button.querySelector('.plus-icon');
+    const checkIcon = button.querySelector('.check-icon');
+    
+    fetch(`/cart/add/${productId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCSRF(),
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: 'quantity=1'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            if (plusIcon && checkIcon) {
+                plusIcon.classList.add('hidden');
+                checkIcon.classList.remove('hidden');
+            }
+            button.style.backgroundColor = '#059669';
+            updateCartCountDisplay(data.cart_count);
+            showToast(data.message);
+            setTimeout(() => {
+                if (plusIcon && checkIcon) {
+                    plusIcon.classList.remove('hidden');
+                    checkIcon.classList.add('hidden');
+                }
+                button.style.backgroundColor = '#10B981';
+                button.disabled = false;
+                button.style.opacity = '1';
+            }, 1500);
+        } else {
+            button.disabled = false;
+            button.style.opacity = '1';
+        }
+    })
+    .catch(err => {
+        button.disabled = false;
+        button.style.opacity = '1';
+    });
+}
+
+function showToast(message) {
+    const toast = document.getElementById('cartToast');
+    const toastMsg = document.getElementById('toastMessage');
+    if (toastMsg) toastMsg.textContent = message || 'Item added to cart';
+    toast.classList.remove('translate-y-40', 'opacity-0', 'pointer-events-none');
+    toast.classList.add('translate-y-0', 'opacity-100');
+    toast.style.pointerEvents = 'auto';
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(() => {
+        toast.classList.add('translate-y-40', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+    }, 3000);
+}
+
+function updateCartCountDisplay(count) {
+    const cartBadge = document.getElementById('cartBadge');
+    if (cartBadge) {
+        cartBadge.textContent = count;
+        cartBadge.style.display = count > 0 ? 'flex' : 'none';
+    }
+    const cartBadgeDropdown = document.getElementById('cartBadgeDropdown');
+    if (cartBadgeDropdown) {
+        cartBadgeDropdown.textContent = count;
+        cartBadgeDropdown.style.display = count > 0 ? 'inline-block' : 'none';
+    }
+    const mobileBadge1 = document.getElementById('mobileCartBadge');
+    const mobileBadge2 = document.getElementById('mobileCartBadge2');
+    [mobileBadge1, mobileBadge2].forEach(badge => {
+        if (badge) {
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'flex' : 'none';
+        }
+    });
+}
+</script>
 
 <style>
 .scrollbar-hide::-webkit-scrollbar { display: none; }
